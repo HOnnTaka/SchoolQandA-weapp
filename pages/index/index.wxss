@@ -1,0 +1,238 @@
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+scroll-view::-webkit-scrollbar {
+  display: none;
+}
+
+.container {
+  display: flex;
+  font-size: 28rpx;
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  background-image: linear-gradient(90deg, #e9e9ff, #ffecec);
+  width: 100%;
+  color: #000000cc;
+}
+
+.search-bar {
+  height: 80rpx;
+  position: relative;
+  padding: 20rpx;
+  width: calc(100% - 40rpx);
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.search-bar image {
+  height: 40rpx;
+  position: absolute;
+  left: 40rpx;
+  width: 40rpx;
+  z-index: 1;
+}
+.search-bar input {
+  padding: 10rpx 10rpx 10rpx 75rpx;
+  height: 50rpx;
+  border-radius: 50px;
+  background: #fff;
+  width: 100%;
+  box-shadow: 0 0 10px #0000000c;
+}
+.search-bar.hasinput .search-after {
+  opacity: 1;
+  pointer-events: all;
+}
+.search-after {
+  z-index: 100;
+  position: absolute;
+  right: 65px;
+  display: flex;
+  align-items: center;
+}
+.search-btn {
+  color: #ffffffee;
+  border-radius: 100px;
+  padding: 10rpx 20rpx;
+  background-image: linear-gradient(90deg, #17abe3, #ff83e0);
+}
+.clear-btn {
+  margin-right: 20rpx;
+  position: unset;
+  background: #b3b3b3cc;
+  border-radius: 50%;
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffffbb;
+}
+.cancel-btn {
+  color: #666;
+  white-space: nowrap;
+  margin: 0 10px;
+}
+.hot-tabs-scroll {
+  height: 60rpx;
+  margin: 20rpx;
+  width: calc(100% - 30px);
+}
+.hot-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+.hot-tabs {
+  flex-direction: row;
+  display: flex;
+}
+
+.tab {
+  white-space: nowrap;
+  padding: 10rpx 20rpx;
+  margin-right: 20rpx;
+  border-radius: 15px;
+  background-color: #ffffffbb;
+  box-shadow: 0 0 10px #0000000c;
+}
+.tab.active {
+  background-image: linear-gradient(90deg, #17abe3bb, #ff7cdebb);
+  color: #ffffff;
+}
+
+#question-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff80;
+  border-radius: 30px 30px 0 0;
+}
+
+.tips {
+  margin-top: 15px;
+  color: #999;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.question-item {
+  transition: all 0.3s ease;
+  margin: 15px;
+  padding: 15px;
+  background: #ffffffbb;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 0 0 10px #0000000c;
+}
+.avatar {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  margin-right: 15px;
+  align-self: flex-start;
+}
+.question {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+.answer {
+  margin: 30rpx 0;
+  display: flex;
+  align-items: center;
+}
+.question text,
+.answer text {
+  width: calc(100% - 30px);
+  user-select: all;
+}
+.bottom-tips {
+  margin-top: 20px;
+  margin-bottom: 10vh;
+  color: #999;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.more-answers {
+  color: #17abe3;
+}
+#ask-portal {
+  color: #fff;
+  z-index: 1;
+  border-radius: 50px;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 20rpx 40rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(90deg, #17abe3bb, #ff7cdebb);
+  font-size: 38rpx;
+  font-weight: 500;
+  box-shadow: 0 0 20px #17ade352;
+  backdrop-filter: blur(5px);
+}
+#ask-portal image {
+  height: 50rpx;
+  width: 50rpx;
+  margin-bottom: -7rpx;
+  margin-right: 15rpx;
+}
+#personal-portal image {
+  height: 50rpx;
+  width: 50rpx;
+}
+#personal-portal {
+  color: #fff;
+  z-index: 1;
+  border-radius: 50px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(90deg, #17abe3bb, #ff7cdebb);
+  box-shadow: 0 0 20px #17ade352;
+  backdrop-filter: blur(5px);
+}
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 100rpx;
+  background: #ffffff81;
+  border-top: 1rpx solid #cfcfcf;
+  backdrop-filter: blur(10px);
+}
+.tabBar-item {
+  flex: 1;
+  font-size: 12px;
+  height: 100%;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+.tabBar-item.on {
+  color: #17abe3;
+}
+.tabBar-item image {
+  display: block;
+  height: 48rpx;
+  width: 48rpx;
+}

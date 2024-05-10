@@ -1,0 +1,88 @@
+<page-meta class="container">
+  <navigation-bar title="信职Q&A" back="{{ false }}"> </navigation-bar>
+  <view class="search-bar">
+    <image class="search-icon" src="../../images/search.png" mode="aspectFit" />
+    <input
+      type="text"
+      bindtap="onSearchFocus"
+      bindfocus="onSearchFocus"
+      placeholder="有问题直接搜"
+      bindinput="onSearchInput"
+      value="{{ searchValue }}"
+    />
+    <view class="search-after" wx:if="{{ searchValue }}">
+      <view class="clear-btn" bindtap="onClearTap">×</view>
+      <view class="search-btn" bindtap="onSearchTap">搜索</view>
+    </view>
+    <view wx:if="{{ showCancel != '' }}" bindtap="onCancelTap" class="cancel-btn">取消</view>
+  </view>
+  <scroll-view
+    scrollbar="none"
+    enhanced="true"
+    show-scrollbar="false"
+    class="hot-tabs-scroll"
+    scroll-x
+    type="list"
+  >
+    <view class="hot-tabs">
+      <block wx:for="{{ classifications }}" wx:for-index="index" wx:for-item="item" wx:key="_id">
+        <view
+          bindtap="onTabTap"
+          class="tab,{{ classificationSelectedId == item._id ? 'active' : '' }}"
+          data-id="{{ item._id }}"
+          animation="{{ item.animation }}"
+          style="opacity: 0; transform: translateX(100px)"
+          >{{ item.classification }}</view
+        >
+      </block>
+    </view>
+  </scroll-view>
+  <scroll-view
+    scrollbar="none"
+    bindscrolltolower="onScrollToLower"
+    using-sticky
+    enhanced="true"
+    show-scrollbar="false"
+    id="question-list"
+    type="list"
+    scroll-y
+  >
+    <view class="tips">点击热门标签快速查看相关问题</view>
+    <block wx:for="{{ questions }}" wx:key="id">
+      <view
+        class="question-item"
+        animation="{{ item.animation }}"
+      >
+        <view class="question">
+          <image
+            data-id="{{ item.user_id }}"
+            class="avatar"
+            src="{{ avators[item.user_id] }}"
+            mode="aspectFit"
+            lazy-load="true"
+          />
+          <text class selectable="false" space="false" decode="false">{{ item.question }}</text>
+        </view>
+        <view class="answer">
+          <image class="avatar" src="/images/default.png" mode="aspectFit" lazy-load="true" />
+          <text class selectable="false" space="false" decode="false">{{ item.contents[0] }}</text>
+        </view>
+        <!-- <view class="more-answers" bindtap="onMoreAnswersTap">全部{{ item.contents.length }}个回答 > </view> -->
+      </view>
+    </block>
+    <view class="bottom-tips">{{ bottomTips }}</view>
+  </scroll-view>
+
+  <root-portal>
+    <view bind:tap="onAskTap"  id="ask-portal">
+      <image class src="../../images/ask.png" mode="aspectFit" />
+      <text>我也要提问</text>
+    </view>
+    <view id="personal-portal">
+      <image src="../../images/myask.png" mode="aspectFit" />
+    </view>
+  </root-portal>
+  <!-- <view class="tabBar">
+    <view class="tabBar-item on"> <image src="../../images/index-on.png" mode="aspectFit" />问答主页</view>
+  </view> -->
+</page-meta>
