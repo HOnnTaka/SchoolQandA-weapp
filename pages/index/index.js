@@ -10,9 +10,6 @@ Component({
     page: 1,
     pageSize: 10,
     hasMore: true,
-    avators: {
-      "": "/images/default.png",
-    },
   },
   pageLifetimes: {
     // 获取问答列表
@@ -34,26 +31,6 @@ Component({
     },
   },
   methods: {
-    async getAvator(e) {
-      const db = getApp().db;
-      this.data.questions.forEach(async item => {
-        if (!(item.user_id in this.data.avators)) {
-          this.setData({
-            avators: {
-              ...this.data.avators,
-              [item.user_id]: "/images/default.png",
-            },
-          });
-          const { data } = await db.collection("user").where({ _openid: item.user_id }).get();
-          this.setData({
-            avators: {
-              ...this.data.avators,
-              [item.user_id]: data[0].avator,
-            },
-          });
-        }
-      });
-    },
     async getClassifications() {
       // 分类列表
       const db = getApp().db;
@@ -121,7 +98,6 @@ Component({
       }
       const data = res.data;
 
-      this.getAvator();
 
       const startIndex = (this.data.page - 1) * this.data.pageSize;
 
@@ -186,7 +162,7 @@ Component({
     onClearTap(e) {
       // 处理清空搜索的点击事件
       this.setData({
-        searchValue: this.data.searchValue,
+        searchValue: "",
       });
     },
     async onSearchTap(e) {

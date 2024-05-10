@@ -50,7 +50,7 @@ scroll-view::-webkit-scrollbar {
 .search-after {
   z-index: 100;
   position: absolute;
-  right: 65px;
+  right: 120rpx;
   display: flex;
   align-items: center;
 }
@@ -150,6 +150,7 @@ scroll-view::-webkit-scrollbar {
 .answer text {
   width: calc(100% - 30px);
   user-select: all;
+  line-break: anywhere;
 }
 .bottom-tips {
   margin-top: 20px;

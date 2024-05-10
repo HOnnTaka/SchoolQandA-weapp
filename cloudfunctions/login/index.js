@@ -33,7 +33,6 @@ exports.main = async (event, context) => {
       })
       .get();
     return {
-      event,
       avatarUrl: data[0].avatarUrl,
       nickName: data[0].nickName,
       _openid: wxContext.OPENID,

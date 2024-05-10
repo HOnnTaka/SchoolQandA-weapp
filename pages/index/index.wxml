@@ -57,7 +57,7 @@
           <image
             data-id="{{ item.user_id }}"
             class="avatar"
-            src="{{ avators[item.user_id] }}"
+            src="{{ item.user_avatar }}"
             mode="aspectFit"
             lazy-load="true"
           />

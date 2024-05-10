@@ -25,6 +25,5 @@
     "tabSize": 2
   },
   "appid": "wx48565e71e81ee40a",
-  "cloudfunctionRoot": "cloudfunctions/",
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
+  "cloudfunctionRoot": "cloudfunctions/"
 }

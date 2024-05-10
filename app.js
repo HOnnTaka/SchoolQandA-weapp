@@ -11,11 +11,7 @@ App({
     app.db = wx.cloud.database({
       env: "dz-q-and-a-4gyin7qna06146b1",
     });
-    const { result: userinfo } = await wx.cloud.callFunction({
-      name: "login",
-    });
-    app.globalData.userinfo = userinfo;
-    console.log(userinfo);
+    // console.log(userinfo);
     // try {
     //   const { usertype } = await app.db
     //     .collection("user")
@@ -47,7 +43,6 @@ App({
     });
   },
   globalData: {
-    userinfo: null,
   },
   db: null,
   // $http(methods, url, data) {
