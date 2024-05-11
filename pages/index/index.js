@@ -21,11 +21,22 @@ Component({
     // 页面显示
     show() {
       this.animate(
-        ".container",
+        ".search-bar,.hot-tabs-scroll",
         [{ opacity: 0 }, { opacity: 1 }],
         1000,
         function () {
-          this.clearAnimation(".container", { opacity: true });
+          this.clearAnimation(".search-bar,.hot-tabs-scroll", { opacity: true });
+        }.bind(this)
+      );
+      this.animate(
+        "#question-list",
+        [
+          { opacity: 0, translateY: 500, ease: "ease-in-out" },
+          { opacity: 1, translateY: 0, ease: "ease-in-out" },
+        ],
+        1000,
+        function () {
+          this.clearAnimation("#question-list", { opacity: true, translateY: true });
         }.bind(this)
       );
     },
@@ -80,24 +91,31 @@ Component({
       }
       const db = getApp().db;
       let res;
-      if (id != "0") {
-        res = await db
-          .collection("question")
-          .orderBy("view_count", "asc")
-          .where({ classification_id: id })
-          .skip(this.data.pageSize * (this.data.page - 1))
-          .limit(this.data.pageSize)
-          .get();
-      } else {
-        res = await db
-          .collection("question")
-          .orderBy("view_count", "asc")
-          .skip(this.data.pageSize * (this.data.page - 1))
-          .limit(this.data.pageSize)
-          .get();
-      }
-      const data = res.data;
 
+      let cache = wx.getStorageSync(`${id}#${this.data.page}`);
+      if (cache) {
+        res = cache;
+      } else {
+        if (id != "0") {
+          res = await db
+            .collection("question")
+            .orderBy("view_count", "desc")
+            .where({ classification_id: id })
+            .skip(this.data.pageSize * (this.data.page - 1))
+            .limit(this.data.pageSize)
+            .get();
+        } else {
+          res = await db
+            .collection("question")
+            .orderBy("view_count", "desc")
+            .skip(this.data.pageSize * (this.data.page - 1))
+            .limit(this.data.pageSize)
+            .get();
+        }
+        wx.setStorageSync(`${id}#${this.data.page}`, res);
+      }
+
+      const data = res.data;
 
       const startIndex = (this.data.page - 1) * this.data.pageSize;
 
@@ -166,22 +184,30 @@ Component({
       });
     },
     async onSearchTap(e) {
-      const { result } = await wx.cloud.callFunction({
-        name: "searchQuestion",
-        data: {
-          keyword: this.data.searchValue,
-          hasMore: false,
-        },
-      });
+      let res;
+      const keyword = this.data.searchValue;
+      let cache = wx.getStorageSync(`${keyword}`);
+      if (cache) {
+        res = cache;
+      } else {
+        const { result } = await wx.cloud.callFunction({
+          name: "searchQuestion",
+          data: {
+            keyword: keyword,
+          },
+        });
+        wx.setStorageSync(`${keyword}`, result);
+        res = result;
+      }
 
-      if (result.length == 0) {
+      if (res.length == 0) {
         this.setData({
           bottomTips: "没有搜索到相关问题",
         });
       }
 
       this.setData({
-        questions: result,
+        questions: res,
       });
     },
     async onTabTap(e) {

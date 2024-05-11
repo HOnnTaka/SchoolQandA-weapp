@@ -1,1 +1,61 @@
-<view>New Page</view>
+<page-meta class="container">
+  <form bindsubmit="submitForm" class="form">
+    <view class="top-tips" hover-class="none" hover-stop-propagation="false"
+      >填写分类可以让问题更快被看到</view
+    >
+    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+      <label for="avatar" class="form-label" hover-class="none" hover-stop-propagation="false"> 头像 </label>
+      <button
+        id="avatar"
+        name="avatar"
+        class="form-input avatar-wrapper"
+        open-type="chooseAvatar"
+        bind:chooseavatar="onChooseAvatar"
+      >
+        <image class="avatar" src="{{ avatarUrl }}"></image>
+      </button>
+    </view>
+    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+      <label for="nickname" class="form-label" hover-class="none" hover-stop-propagation="false">
+        昵称
+      </label>
+      <input
+        id="nickname"
+        bindinput="bindNickname"
+        name="nickname"
+        type="nickname"
+        class="form-input weui-input"
+        placeholder="请输入昵称"
+      />
+    </view>
+    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+      <label for="question" class="form-label" hover-class="none" hover-stop-propagation="false">
+        问题
+      </label>
+      <input
+        id="question"
+        name="question"
+        type="text"
+        placeholder="请输入问题"
+        class="form-input weui-input"
+      />
+    </view>
+    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+      <label for="category" class="form-label" hover-class="none" hover-stop-propagation="false">
+        问题分类</label
+      >
+      <picker
+        id="category"
+        class="form-input"
+        name="category"
+        bindchange="bindPickerChange"
+        value="{{ chosenCategory }}"
+        range="{{ categories }}"
+        range-key="classification"
+      >
+        <view class="picker"> {{ categories[chosenCategory].classification }} </view>
+      </picker>
+    </view>
+    <button form-type="submit" class="submit-btn">提交</button>
+  </form>
+</page-meta>

@@ -32,6 +32,26 @@ App({
 
     // const res = await this.$http("GET", "/userinfo");
     // globalData.userinfo = res.data;
+    // const cacheManager = wx.createCacheManager({ mode: "always" });
+    // cacheManager.addRule(/https?:\/\/.*/gi); 
+
+    // cacheManager.on("enterWeakNetwork", () => {
+    //   console.log("enterWeakNetwork");
+    // });
+    // cacheManager.on("exitWeakNetwork", () => {
+    //   console.log("exitWeakNetwork");
+    // });
+    // cacheManager.on("request", evt => {
+    //   return new Promise(async (resolve, reject) => {
+    //     const matchRes = cacheManager.match(evt);
+    //     if (matchRes) {
+    //       resolve(matchRes.data || null);
+    //     } else {
+    //       const res = await evt.request();
+    //       resolve(res);
+    //     }
+    //   });
+    // });
   },
 
   onError(err) {
@@ -42,8 +62,7 @@ App({
       duration: 2000,
     });
   },
-  globalData: {
-  },
+  globalData: {},
   db: null,
   // $http(methods, url, data) {
   //   return new Promise((resolve, reject) => {

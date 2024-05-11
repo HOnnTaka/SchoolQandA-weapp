@@ -1,14 +1,17 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/login/login",
     "pages/ask/ask",
-    "pages/question-detail/question-detail"
+    "pages/question-detail/question-detail",
+    "pages/myquestion/myquestion"
   ],
+  "useExtendedLib": {
+    "weui": true
+  },
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarTitleText": "信职Q&A",
+    "navigationBarBackgroundColor": "#ffffffff"
   },
   "style": "v2",
   "componentFramework": "glass-easel",
