@@ -2,5 +2,6 @@
   "component": true,
   "usingComponents": {
   },
-  "navigationBarTitleText": "信职Q&A"
+  "navigationBarTitleText": "信职Q&A",
+  "disableScroll":true
 }

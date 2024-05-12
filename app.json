@@ -2,8 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/ask/ask",
-    "pages/question-detail/question-detail",
-    "pages/myquestion/myquestion"
+    "pages/myquestion/myquestion",
+    "pages/questiondetail/questiondetail"
   ],
   "useExtendedLib": {
     "weui": true

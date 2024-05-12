@@ -1,0 +1,117 @@
+page {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+}
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.question {
+  margin: 15px;
+  background: #ffffffbb;
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 10px #0000000c;
+}
+.userinfo {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.avatar {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.question-title {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+.answer-list {
+  flex: 1;
+  width: calc(100% - 30px);
+  background: #ffffff80;
+  padding: 15px;
+  border-radius: 30px 30px 0 0;
+}
+.item {
+  opacity: 0;
+  font-size: 14px;
+  margin-top: 15px;
+  background: #ffffffbb;
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 10px #0000000c;
+}
+.tips {
+  color: #999;
+  width: 100%;
+  display: flex;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.input-bar {
+  height: 80rpx;
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.input-bar input {
+  padding: 10rpx 10rpx 10rpx 30rpx;
+  height: 50rpx;
+  border-radius: 50px;
+  background: #fff;
+  flex: 1;
+  box-shadow: 0 0 10px #0000000c;
+}
+.input-bar.hasinput .input-after {
+  opacity: 1;
+  pointer-events: all;
+}
+.input-after {
+  z-index: 100;
+  position: absolute;
+  right: 100rpx;
+  display: flex;
+  align-items: center;
+}
+.send-btn {
+  color: #ffffffee;
+  border-radius: 100px;
+  padding: 10rpx 20rpx;
+  background-image: linear-gradient(90deg, #17abe3, #ff83e0);
+}
+.clear-btn {
+  margin-right: 20rpx;
+  position: unset;
+  background: #b3b3b3cc;
+  border-radius: 50%;
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffffbb;
+}
+.cancel-btn {
+  color: #666;
+  white-space: nowrap;
+  margin: 0 10px;
+}

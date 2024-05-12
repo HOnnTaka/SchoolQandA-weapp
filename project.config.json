@@ -2,7 +2,12 @@
   "compileType": "miniprogram",
   "libVersion": "trial",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "value": "/projectmaps",
+        "type": "folder"
+      }
+    ],
     "include": []
   },
   "setting": {
@@ -25,5 +30,6 @@
     "tabSize": 2
   },
   "appid": "wx48565e71e81ee40a",
-  "cloudfunctionRoot": "cloudfunctions/"
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
 }

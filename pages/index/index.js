@@ -8,18 +8,13 @@ Component({
     showCancel: false,
     bottomTips: "",
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
     hasMore: true,
   },
+  created() {},
   pageLifetimes: {
     // 获取问答列表
     async ready() {
-      await this.getClassifications();
-      await this.getQuestions();
-      wx.hideLoading();
-    },
-    // 页面显示
-    show() {
       this.animate(
         ".search-bar,.hot-tabs-scroll",
         [{ opacity: 0 }, { opacity: 1 }],
@@ -39,7 +34,17 @@ Component({
           this.clearAnimation("#question-list", { opacity: true, translateY: true });
         }.bind(this)
       );
+      await this.getClassifications();
+      await this.getQuestions();
+      wx.hideLoading();
+      setTimeout(async () => {
+        const { result } = await wx.cloud.callFunction({
+          name: "login",
+        });
+        getApp().globalData.userInfo = result;
+      });
     },
+    // 页面关闭
   },
   methods: {
     async getClassifications() {
@@ -89,35 +94,45 @@ Component({
         this.setData({ bottomTips: "没有更多了" });
         return;
       }
-      const db = getApp().db;
-      let res;
 
+      const db = getApp().db;
+      const $ = db.command.aggregate;
+      let data;
       let cache = wx.getStorageSync(`${id}#${this.data.page}`);
       if (cache) {
-        res = cache;
+        data = cache;
       } else {
-        if (id != "0") {
-          res = await db
-            .collection("question")
-            .orderBy("view_count", "desc")
-            .where({ classification_id: id })
-            .skip(this.data.pageSize * (this.data.page - 1))
-            .limit(this.data.pageSize)
-            .get();
-        } else {
-          res = await db
-            .collection("question")
-            .orderBy("view_count", "desc")
-            .skip(this.data.pageSize * (this.data.page - 1))
-            .limit(this.data.pageSize)
-            .get();
-        }
-        wx.setStorageSync(`${id}#${this.data.page}`, res);
+        wx.showLoading({
+          title: "加载中",
+        });
+
+        let query = db
+          .collection("question")
+          .aggregate()
+          .project({
+            question: 1,
+            first_answer: $.arrayElemAt(["$contents", 0]),
+            answer_count: $.size("$contents"),
+            classification_id: 1,
+            user_avatar: 1,
+            user_nickname: 1,
+            user_id: 1,
+            view_count: 1,
+          })
+          .sort({ view_count: -1 });
+
+        if (id != "0") query = query.match({ classification_id: id });
+        const result = await query
+          .skip((this.data.page - 1) * this.data.pageSize)
+          .limit(this.data.pageSize)
+          .end();
+        wx.setStorageSync(`${id}#${this.data.page}`, result.list);
+        wx.hideLoading();
+        data = result.list;
       }
+      // console.log(data);
 
-      const data = res.data;
-
-      const startIndex = (this.data.page - 1) * this.data.pageSize;
+      // const startIndex = (this.data.page - 1) * this.data.pageSize;
 
       // let animations = {};
       // data.forEach((item, index) => {
@@ -171,7 +186,6 @@ Component({
         searchValue: "",
         showCancel: false,
         page: 1,
-        pageSize: 10,
         hasMore: true,
       });
       wx.hideKeyboard();
@@ -184,6 +198,9 @@ Component({
       });
     },
     async onSearchTap(e) {
+      wx.showLoading({
+        title: "搜索中",
+      });
       let res;
       const keyword = this.data.searchValue;
       let cache = wx.getStorageSync(`${keyword}`);
@@ -198,14 +215,19 @@ Component({
         });
         wx.setStorageSync(`${keyword}`, result);
         res = result;
-      }
-
+      } // 滚动
+      wx.createSelectorQuery()
+        .select("#question-list")
+        .node()
+        .exec(res => {
+          res[0].node.scrollTo(0, 0);
+        });
+      wx.hideLoading();
       if (res.length == 0) {
         this.setData({
           bottomTips: "没有搜索到相关问题",
         });
       }
-
       this.setData({
         questions: res,
       });
@@ -214,6 +236,7 @@ Component({
       this.setData({
         searchValue: "",
         showCancel: false,
+        bottomTips: "",
       });
       const targetId = e.currentTarget.dataset.id;
       const originId = this.data.classificationSelectedId;
@@ -222,7 +245,6 @@ Component({
       }
       this.setData({
         page: 1,
-        pageSize: 10,
         hasMore: true,
       });
       await this.getQuestions(targetId);
@@ -238,8 +260,40 @@ Component({
         });
     },
     onMoreAnswersTap(e) {
-      // 处理查看更多答案的点击事件
-      console.log("查看更多答案");
+      const page = this;
+      wx.showLoading({
+        title: "加载中",
+      });
+      wx.navigateTo({
+        url: "/pages/questiondetail/questiondetail",
+        events: {
+          updateViewCount: data => {
+            this.setData({
+              questions: this.data.questions.map(item => {
+                if (item._id == data.questionId) {
+                  item.view_count = data.view_count;
+                }
+                return item;
+              }),
+            });
+            wx.clearStorageSync();
+          },
+          updateAnswerCount: data => {
+            this.setData({
+              questions: this.data.questions.map(item => {
+                if (item._id == data.questionId) {
+                  item.answer_count = data.answer_count;
+                }
+                return item;
+              }),
+            });
+            wx.clearStorageSync();
+          },
+        },
+        success: function (res) {
+          res.eventChannel.emit("acceptData", e.currentTarget.dataset.data);
+        },
+      });
     },
     async onScrollToLower(e) {
       // 加载更多
@@ -249,6 +303,11 @@ Component({
     onAskTap(e) {
       wx.navigateTo({
         url: "/pages/ask/ask",
+      });
+    },
+    onPersonalPortalTap(e) {
+      wx.navigateTo({
+        url: "/pages/myquestion/myquestion",
       });
     },
   },

@@ -3,7 +3,7 @@
     <view class="top-tips" hover-class="none" hover-stop-propagation="false"
       >填写分类可以让问题更快被看到</view
     >
-    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+    <view class="form-item meima-item" hover-class="none" hover-stop-propagation="false">
       <label for="avatar" class="form-label" hover-class="none" hover-stop-propagation="false"> 头像 </label>
       <button
         id="avatar"
@@ -15,7 +15,7 @@
         <image class="avatar" src="{{ avatarUrl }}"></image>
       </button>
     </view>
-    <view class="form-item" hover-class="none" hover-stop-propagation="false">
+    <view class="form-item " hover-class="none" hover-stop-propagation="false">
       <label for="nickname" class="form-label" hover-class="none" hover-stop-propagation="false">
         昵称
       </label>
@@ -25,8 +25,15 @@
         name="nickname"
         type="nickname"
         class="form-input weui-input"
+        value="{{ nickname }}"
         placeholder="请输入昵称"
       />
+    </view>
+    <view class="form-item2" hover-class="none" hover-stop-propagation="false">
+      <checkbox-group bindchange="bindSaveInfo">
+        <checkbox  id="saveInfo" class="weui-checkbox" value="check" checked="{{ checked }}" color="" />
+        <label for="saveInfo">保存头像和昵称</label>
+      </checkbox-group>
     </view>
     <view class="form-item" hover-class="none" hover-stop-propagation="false">
       <label for="question" class="form-label" hover-class="none" hover-stop-propagation="false">

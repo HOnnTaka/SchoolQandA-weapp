@@ -6,40 +6,32 @@ Page({
     categories: [],
     chosenCategory: 0,
     nickname: "",
+    checked: false,
   },
   async onLoad(options) {
-    const { result: userinfo } = await wx.cloud.callFunction({
-      name: "login",
-    });
-    console.log(userinfo);
+    let userInfo = null;
+    if (!getApp().globalData.userInfo) {
+      const { result } = await wx.cloud.callFunction({
+        name: "login",
+      });
+      userInfo = result;
+      getApp().globalData.userInfo = userInfo;
+    } else {
+      userInfo = getApp().globalData.userInfo;
+    }
+
+    // console.log(this.data, userInfo);
     this.setData({
-      userInfo: userinfo,
-      avatarUrl: userinfo.avatarUrl == "" ? this.data.avatarUrl : userinfo.avatarUrl,
-      nickname: userinfo.nickName,
+      userInfo: userInfo,
+      avatarUrl: userInfo.avatarUrl == "" ? this.data.avatarUrl : userInfo.avatarUrl,
+      nickname: userInfo.nickName,
     });
     const db = getApp().db;
     const { data } = await db.collection("classification").get();
     this.setData({
       categories: data,
-      chosenCategory: data.findIndex(item => item._id == "0"),
+      chosenCategory: data.findIndex(item => item._id == "-1"),
     });
-    // if(userinfo.avatatUrl == '' || userinfo.nickName == ''){
-    //   wx.showModal({
-    //     title: '提示',
-    //     content: '是否保存头像和昵称',
-    //     complete: (res) => {
-    //       if (res.cancel) {
-
-    //       }
-
-    //       if (res.confirm) {
-    //         wx.redirectTo({
-    //           url: '/pages/login/login'
-    //         })
-    //       }
-    //     }
-    //   })
-    // }
   },
   onReady() {
     this.animate(
@@ -50,7 +42,7 @@ Page({
       ],
       1000,
       function () {
-        this.clearAnimation(".container", { opacity: true, translateY: true });
+        this.clearAnimation(".form", { opacity: true, translateY: true });
       }.bind(this)
     );
   },
@@ -78,8 +70,15 @@ Page({
       chosenCategory: e.detail.value,
     });
   },
-  submitForm(e) {
-    console.log(e);
+  bindSaveInfo(e) {
+    this.setData({
+      checked: e.detail.value.length > 0,
+    });
+  },
+  async submitForm(e) {
+    wx.showLoading({
+      title: "提交中",
+    });
     const { avatarUrl } = this.data;
     let { nickname, category, question } = e.detail.value;
 
@@ -87,7 +86,7 @@ Page({
       return wx.showToast({
         title: "请输入问题内容",
         icon: "none",
-        duration: 2000,
+        duration: 2000, 
       });
     }
 
@@ -95,32 +94,52 @@ Page({
       nickname = "匿名用户";
     }
 
+    // 将临时图片avatarUrl保存为文件上传到云存储
+    let fileUrl = avatarUrl;
     if (
-      (avatarUrl !=
-        "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0" ||
-        nickname != "匿名用户") &&
-      (this.data.userInfo.nickName == "" || this.data.userInfo.avatarUrl == "")
+      this.data.checked &&
+      avatarUrl !=
+        "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0"
     ) {
-      wx.showModal({
-        title: "提示",
-        content: "是否保存头像和昵称",
-        complete: res => {
-
+      console.log(avatarUrl);
+      let { fileID } = await wx.cloud.uploadFile({
+        cloudPath: `images/avatar/${new Date().getTime()}-${Math.floor(Math.random() * 10000)}.png`,
+        filePath: avatarUrl,
+        config: {
+          env: "dz-q-and-a-4gyin7qna06146b1",
         },
       });
+      fileUrl = fileID;
+    }
+
+    if (this.data.checked) {
+      const db = getApp().db;
+      const user = await db
+        .collection("user")
+        .where({ _openid: this.data.userInfo._openid })
+        .update({
+          data: {
+            avatarUrl: fileUrl,
+            nickName: nickname,
+          },
+        });
+      getApp().globalData.userInfo = {
+        ...this.data.userInfo,
+        avatarUrl: fileUrl,
+        nickName: nickname,
+      };
     }
 
     const db = getApp().db;
     const newQuestion = {
       user_id: this.data.userInfo._openid,
-      user_avatar: avatarUrl,
+      user_avatar: fileUrl,
       user_nickname: nickname,
       classification_id: this.data.categories[category]._id,
       question,
       contents: [],
       view_count: 0,
     };
-    console.log(newQuestion);
     db.collection("question")
       .add({
         data: newQuestion,

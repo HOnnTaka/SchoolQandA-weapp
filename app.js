@@ -62,7 +62,9 @@ App({
       duration: 2000,
     });
   },
-  globalData: {},
+  globalData: {
+    userInfo: null,
+  },
   db: null,
   // $http(methods, url, data) {
   //   return new Promise((resolve, reject) => {
