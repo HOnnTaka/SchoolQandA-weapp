@@ -7,31 +7,48 @@ Page({
     chosenCategory: 0,
     nickname: "",
     checked: false,
+    editInfo: {},
+    question: "",
   },
   async onLoad(options) {
-    let userInfo = null;
-    if (!getApp().globalData.userInfo) {
-      const { result } = await wx.cloud.callFunction({
-        name: "login",
-      });
-      userInfo = result;
-      getApp().globalData.userInfo = userInfo;
-    } else {
-      userInfo = getApp().globalData.userInfo;
-    }
+    const userInfo = getApp().globalData.userInfo;
 
-    // console.log(this.data, userInfo);
     this.setData({
+      editInfo: options,
       userInfo: userInfo,
-      avatarUrl: userInfo.avatarUrl == "" ? this.data.avatarUrl : userInfo.avatarUrl,
-      nickname: userInfo.nickName,
     });
+    console.log(options);
+
     const db = getApp().db;
     const { data } = await db.collection("classification").get();
+    data.unshift({ _id: "-1", classification: "未分类" });
+    console.log(data);
     this.setData({
       categories: data,
       chosenCategory: data.findIndex(item => item._id == "-1"),
     });
+
+    this.getOpenerEventChannel().on("acceptData", data => {
+      console.log(data);
+      if (this.data.editInfo.type == "edit") {
+        this.setData({
+          avatarUrl: data.user_avatar,
+          nickname: data.user_nickname ? data.user_nickname : "匿名用户",
+          question: data.question,
+          chosenCategory: this.data.categories.findIndex(
+            item => item._id == (data.classification_id ? data.classification_id : "-1")
+          ),
+        });
+      }
+    });
+
+    if (options.type != "edit") {
+      // console.log(this.data, userInfo);
+      this.setData({
+        avatarUrl: userInfo.avatarUrl == "" ? this.data.avatarUrl : userInfo.avatarUrl,
+        nickname: userInfo.nickName,
+      });
+    }
   },
   onReady() {
     this.animate(
@@ -65,7 +82,7 @@ Page({
       nickname: e.detail.value,
     });
   },
-  bindPickerChange: function (e) {
+  bindPickerChange(e) {
     this.setData({
       chosenCategory: e.detail.value,
     });
@@ -79,6 +96,59 @@ Page({
     wx.showLoading({
       title: "提交中",
     });
+    if (this.data.editInfo.type == "edit") {
+      await this.updateInfo(e);
+    } else {
+      await this.saveInfo(e);
+    }
+  },
+  async updateInfo(e) {
+    console.log("edit");
+    const { question } = e.detail.value;
+    if (question.trim() == "") {
+      return wx.showToast({
+        title: "请输入问题内容",
+        icon: "none",
+        duration: 2000,
+      });
+    }
+    const db = getApp().db;
+    const res = await db
+      .collection("question")
+      .doc(this.data.editInfo.questionId)
+      .update({
+        data: {
+          question,
+          classification_id:
+            this.data.categories[category]._id == "-1" ? null : this.data.categories[category]._id,
+        },
+      });
+    if (res.stats.updated == 1) {
+      wx.showToast({
+        title: "修改成功",
+        icon: "success",
+        duration: 2000,
+      });
+      // 传回主页 分类能保留 id：-1
+      this.getOpenerEventChannel().emit("updateQuestion", {
+        question,
+        classification_id: this.data.categories[this.data.chosenCategory]._id,
+        questionId: this.data.editInfo.questionId,
+      });
+      setTimeout(() => {
+        wx.navigateBack({
+          delta: 1,
+        });
+      }, 1500);
+    } else {
+      wx.showToast({
+        title: "修改失败",
+        icon: "none",
+        duration: 2000,
+      });
+    }
+  },
+  async saveInfo(e) {
     const { avatarUrl } = this.data;
     let { nickname, category, question } = e.detail.value;
 
@@ -86,7 +156,7 @@ Page({
       return wx.showToast({
         title: "请输入问题内容",
         icon: "none",
-        duration: 2000, 
+        duration: 2000,
       });
     }
 
@@ -114,7 +184,7 @@ Page({
 
     if (this.data.checked) {
       const db = getApp().db;
-      const user = await db
+      const res = await db
         .collection("user")
         .where({ _openid: this.data.userInfo._openid })
         .update({
@@ -135,7 +205,8 @@ Page({
       user_id: this.data.userInfo._openid,
       user_avatar: fileUrl,
       user_nickname: nickname,
-      classification_id: this.data.categories[category]._id,
+      classification_id:
+        this.data.categories[category]._id == "-1" ? null : this.data.categories[category]._id,
       question,
       contents: [],
       view_count: 0,

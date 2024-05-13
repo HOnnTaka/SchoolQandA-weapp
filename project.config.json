@@ -22,7 +22,9 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "uglifyFileName": true,
+    "condition": false
   },
   "condition": {},
   "editorSetting": {

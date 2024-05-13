@@ -41,34 +41,56 @@ page {
   width: calc(100% - 30px);
   background: #ffffff80;
   padding: 15px;
+  padding-bottom: 0;
   border-radius: 30px 30px 0 0;
 }
 .item {
   opacity: 0;
   font-size: 14px;
-  margin-top: 15px;
+  margin-bottom: 15px;
   background: #ffffffbb;
-  padding: 15px;
   border-radius: 20px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
   box-shadow: 0 0 10px #0000000c;
 }
+.item-ext {
+  padding: 15px;
+}
+.item-ext .btn {
+  border-radius: 10px;
+}
+.weui-slideview__left {
+  line-break: anywhere;
+  user-select: all;
+  width: calc(100vw - 60px) !important;
+}
+.weui-slideview__right {
+  margin-left: 30px;
+}
+.item:last-child {
+  margin-bottom: 0;
+}
 .tips {
+  opacity: 0;
   color: #999;
   width: 100%;
   display: flex;
   font-size: 14px;
   justify-content: center;
+  margin-bottom: 15px;
+  user-select: all;
 }
 
 .input-bar {
   height: 80rpx;
-  position: absolute;
+  position: fixed;
   z-index: 1;
-  bottom: 0;
-  width: 100%;
+  left: 15px;
+  bottom: 15px;
+  width: calc(100% - 30px);
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
@@ -88,7 +110,7 @@ page {
 .input-after {
   z-index: 100;
   position: absolute;
-  right: 100rpx;
+  right: 93rpx;
   display: flex;
   align-items: center;
 }

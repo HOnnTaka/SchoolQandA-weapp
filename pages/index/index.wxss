@@ -28,10 +28,10 @@ scroll-view::-webkit-scrollbar {
   transition: all 0.3s ease;
 }
 .search-bar image {
-  height: 100p[x];
   position: absolute;
   left: 40rpx;
   width: 40rpx;
+  height: 40rpx;
   z-index: 1;
 }
 .search-bar input {
@@ -93,7 +93,7 @@ scroll-view::-webkit-scrollbar {
   white-space: nowrap;
   padding: 10rpx 25rpx;
   margin-right: 20rpx;
-  border-radius: 15px;
+  border-radius: 100px;
   background-color: #ffffffbb;
   box-shadow: 0 0 10px #0000000c;
 }
@@ -118,15 +118,25 @@ scroll-view::-webkit-scrollbar {
 }
 
 .question-item {
+  width: calc(100% - 30px);
+  overflow: hidden;
   transition: all 0.3s ease;
   margin: 15px;
-  padding: 15px;
   background: #ffffffbb;
   border-bottom: 1px solid #eee;
   display: flex;
   flex-direction: column;
   border-radius: 20px;
   box-shadow: 0 0 10px #0000000c;
+}
+.weui-slideview__left {
+  width: calc(100vw - 60px) !important;
+}
+.weui-slideview__right{
+  margin-left: 30px;
+}
+.item-ext {
+  padding: 15px;
 }
 .avatar {
   width: 58rpx;
@@ -151,6 +161,14 @@ scroll-view::-webkit-scrollbar {
   width: calc(100% - 30px);
   user-select: all;
   line-break: anywhere;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-clamp: 3;
+  box-orient: vertical;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 .question-item-footer {
   font-size: 14px;
@@ -158,6 +176,10 @@ scroll-view::-webkit-scrollbar {
   justify-content: flex-start;
   align-items: center;
   color: #999;
+  padding: 0 5rpx;
+}
+.question-item-footer text{
+  margin-bottom: -5rpx;
 }
 .question-item-footer image {
   position: absolute;
@@ -174,9 +196,14 @@ scroll-view::-webkit-scrollbar {
   position: relative;
   display: flex;
   align-items: center;
+  cursor: pointer;
+}
+.view-count{
+  width: 40rpx;
 }
 .answer-count {
   margin-left: 60rpx;
+  width: 40rpx;
 }
 .bottom-tips {
   margin-top: 20px;
@@ -195,8 +222,9 @@ scroll-view::-webkit-scrollbar {
   transition: all 0.3s ease;
 }
 #ask-portal {
+  white-space: nowrap;
   color: #fff;
-  z-index: 1;
+  z-index: 100;
   border-radius: 50px;
   position: fixed;
   bottom: 20px;
@@ -225,7 +253,7 @@ scroll-view::-webkit-scrollbar {
 }
 #personal-portal {
   color: #fff;
-  z-index: 1;
+  z-index: 100;
   border-radius: 50px;
   position: fixed;
   bottom: 20px;

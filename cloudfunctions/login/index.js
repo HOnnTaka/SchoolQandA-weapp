@@ -21,6 +21,7 @@ exports.main = async (event, context) => {
         nickName: "",
         avatarUrl: "",
         unionId: wxContext.UNIONID,
+        type:0
       },
     });
     console.log(user);
@@ -30,5 +31,6 @@ exports.main = async (event, context) => {
     nickName: data[0]?.nickName,
     _openid: wxContext.OPENID,
     unionId: wxContext.UNIONID,
+    type:data[0]?.type
   };
 };

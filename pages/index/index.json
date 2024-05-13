@@ -1,7 +1,8 @@
 {
   "component": true,
   "usingComponents": {
+    "mp-slideview": "weui-miniprogram/slideview/slideview"
   },
   "navigationBarTitleText": "信职Q&A",
-  "disableScroll":true
+  "disableScroll": true
 }

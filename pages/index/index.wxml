@@ -27,6 +27,7 @@
     <view class="hot-tabs">
       <block wx:for="{{ classifications }}" wx:for-index="index" wx:for-item="item" wx:key="_id">
         <view
+          bindlongpress="onTabLongPress"
           bindtap="onTabTap"
           class="tab,{{ classificationSelectedId == item._id ? 'active' : '' }}"
           data-id="{{ item._id }}"
@@ -46,9 +47,19 @@
     type="list"
     scroll-y
   >
-    <view class="tips">点击分类标签快速查看相关问题</view>
+    <view class="tips" wx:if="{{ userType != 1 }}">点击分类标签快速查看相关问题</view>
+    <view class="tips" wx:if="{{ userType == 1 }}">管理员：长按分类可删除</view>
+    <view class="tips" wx:if="{{ userType == 1 }}">管理员：查看详情可编辑回答，滑动问题可编辑分类</view>
+
     <block wx:for="{{ questions }}" wx:key="id">
-      <view class="question-item" animation="{{ item.animation }}">
+      <mp-slideview
+        animation="{{ item.animation }}"
+        bindbuttontap="onSlideButtonTap"
+        class="question-item"
+        ext-class="item-ext"
+        disable="{{ userType == 0 }}"
+        buttons="{{ [{text: '编辑', type: 'primary', data: item._id },{ text: '删除', type: 'warn', data: item._id }] }}"
+      >
         <view class="question">
           <image
             data-id="{{ item.user_id }}"
@@ -73,21 +84,22 @@
             <image src="../../images/answer.png" />
             <text selectable="false">{{ item.answer_count ? item.answer_count : 0 }}</text>
           </view>
-          <view data-data="{{item}}" class="more-answers" bindtap="onMoreAnswersTap">
+          <view data-data="{{ item }}" class="more-answers" bindtap="onMoreAnswersTap">
             <text class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
           </view>
         </view>
-      </view>
+      </mp-slideview>
     </block>
+
     <view class="bottom-tips">{{ bottomTips }}</view>
   </scroll-view>
 
-  <button  bind:tap="onAskTap" id="ask-portal">
+  <button bind:tap="onAskTap" id="ask-portal">
     <image class src="../../images/ask.png" mode="aspectFit" />
     <text>我也要提问</text>
   </button>
 
-  <button id="personal-portal" bind:tap="onPersonalPortalTap" style="width: unset;">
+  <button id="personal-portal" bind:tap="onPersonalPortalTap" style="width: unset">
     <image src="../../images/myask.png" mode="aspectFit" />
   </button>
   <!-- <view class="tabBar">

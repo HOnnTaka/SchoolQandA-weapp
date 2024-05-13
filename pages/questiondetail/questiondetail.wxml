@@ -6,18 +6,43 @@
     </view>
     <view class="question-title">“{{ question }}”</view>
   </view>
-  <scroll-view enhanced="true" class="answer-list" type="list" scroll-y>
-    <view class="tips"></view>
+  <scroll-view
+    scrollbar="none"
+    enhanced="true"
+    show-scrollbar="false"
+    class="answer-list"
+    type="list"
+    scroll-y
+  >
+    <view class="tips" wx:if="{{ contents.length == 0 }}">暂无回答</view>
+    <view class="tips" wx:if="{{ userType == 1 }}">管理员：滑动回答可删除</view>
+    <view class="tips" wx:if="{{ userType == 1 }}">{{ questionId }}</view>
+
     <block wx:for="{{ contents }}" wx:key="index">
-      <text class="item">{{ item }}</text>
+      <mp-slideview
+        bindbuttontap="onSlideButtonTap"
+        class="item"
+        ext-class="item-ext"
+        disable="{{ userType == 0 }}"
+        buttons="{{ [{ text: '删除', type: 'warn', data: index }] }}"
+        >{{ item }}</mp-slideview
+      >
     </block>
-    <view class="input-bar">
-      <input type="text" bindtap="onDiscussFocus" bindfocus="onDiscussFocus" placeholder="参与讨论" bindinput="onDiscussInput" bindconfirm="onDiscussTap" value="{{ discussValue }}" />
-      <view class="input-after" wx:if="{{ discussValue }}">
-        <view class="clear-btn" bindtap="onClearTap">×</view>
-        <view class="send-btn" bindtap="onDiscussTap">发送</view>
-      </view>
-      <view wx:if="{{ showCancel != '' }}" bindtap="onCancelTap" class="cancel-btn">取消</view>
-    </view>
   </scroll-view>
+  <view class="input-bar" wx:if="{{ userType }}">
+    <input
+      type="text"
+      bindtap="onDiscussFocus"
+      bindfocus="onDiscussFocus"
+      placeholder="添加回答"
+      bindinput="onDiscussInput"
+      bindconfirm="onDiscussTap"
+      value="{{ discussValue }}"
+    />
+    <view class="input-after" wx:if="{{ discussValue }}">
+      <view class="clear-btn" bindtap="onClearTap">×</view>
+      <view class="send-btn" bindtap="onDiscussTap">发送</view>
+    </view>
+    <view wx:if="{{ showCancel != '' }}" bindtap="onCancelTap" class="cancel-btn">取消</view>
+  </view>
 </page-meta>

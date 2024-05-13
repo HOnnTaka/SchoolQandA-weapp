@@ -33,7 +33,7 @@ App({
     // const res = await this.$http("GET", "/userinfo");
     // globalData.userinfo = res.data;
     // const cacheManager = wx.createCacheManager({ mode: "always" });
-    // cacheManager.addRule(/https?:\/\/.*/gi); 
+    // cacheManager.addRule(/https?:\/\/.*/gi);
 
     // cacheManager.on("enterWeakNetwork", () => {
     //   console.log("enterWeakNetwork");
@@ -65,6 +65,7 @@ App({
   globalData: {
     userInfo: null,
   },
+  storage: {},
   db: null,
   // $http(methods, url, data) {
   //   return new Promise((resolve, reject) => {

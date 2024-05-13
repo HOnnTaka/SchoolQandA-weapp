@@ -8,8 +8,10 @@ Page({
     view_count: 0,
     discussValue: "",
     showCancel: false,
+    userType: 0,
   },
   async onLoad(option) {
+    this.setData({ userType: getApp().globalData.userInfo.type });
     const eventChannel = this.getOpenerEventChannel();
     // eventChannel.emit('acceptData', {data: 'test'});
     eventChannel.on("acceptData", async data => {
@@ -29,6 +31,7 @@ Page({
       await this.getContents();
       wx.hideLoading();
     });
+    console.log();
   },
   onReady() {
     this.animate(
@@ -53,6 +56,16 @@ Page({
         this.clearAnimation(".question", { opacity: true });
       }.bind(this)
     );
+    setTimeout(() => {
+      this.animate(
+        ".tips",
+        [
+          { opacity: 0, ease: "ease-in-out" },
+          { opacity: 1, ease: "ease-in-out" },
+        ],
+        1000
+      );
+    }, 1000);
   },
   async updateViewCount() {
     const db = wx.cloud.database();
@@ -97,7 +110,10 @@ Page({
         { opacity: 0, translateY: 0, ease: "ease-in-out" },
         { opacity: 1, translateY: 0, ease: "ease-in-out" },
       ],
-      300
+      300,
+      function () {
+        this.clearAnimation(".item", { translateY: true });
+      }.bind(this)
     );
   },
   onDiscussFocus(e) {
@@ -110,7 +126,6 @@ Page({
     this.setData({
       discussValue: e.detail.value,
     });
-    console.log(this.data.discussValue);
   },
   onCancelTap(e) {
     this.setData({
@@ -124,5 +139,85 @@ Page({
       discussValue: "",
     });
   },
-  async onDiscussTap(e) {},
+  async onDiscussTap(e) {
+    if (this.data.discussValue.trim() == "" || !this.data.discussValue) {
+      return wx.showToast({
+        title: "不能为空",
+        icon: "none",
+      });
+    }
+    const db = wx.cloud.database();
+    const _ = db.command;
+
+    const res = await db
+      .collection("question")
+      .doc(this.data.questionId)
+      .update({
+        data: {
+          contents: _.push([this.data.discussValue]),
+        },
+      });
+
+    if (res.stats.updated == 1) {
+      wx.showToast({
+        title: "添加成功",
+        icon: "success",
+      });
+      await this.getContents();
+      this.getOpenerEventChannel().emit("updateAnswer", {
+        questionId: this.data.questionId,
+        content: this.data.discussValue,
+        answer_count: this.data.contents.length,
+      });
+      this.setData({
+        discussValue: "",
+        showCancel: false,
+      });
+    }
+  },
+  async onSlideButtonTap(e) {
+    const { data: index } = e.detail;
+    wx.showModal({
+      title: "提示",
+      content: "确定删除该回答吗？",
+      success: async res => {
+        if (res.confirm) {
+          await this.deleteAnswer(index);
+        }
+      },
+    });
+  },
+  async deleteAnswer(index) {
+    const db = wx.cloud.database();
+
+    // console.log(index);
+    // const contents = this.data.contents.filter((item, i) => i != index);
+    // console.log(contents);
+    // const res = await db
+    //   .collection("question")
+    //   .doc(this.data.questionId)
+    //   .update({
+    //     data: {
+    //       contents: contents,
+    //     },
+    //   });
+
+    const _ = db.command;
+    const res = await db
+      .collection("question")
+      .doc(this.data.questionId)
+      .update({
+        data: {
+          contents: _.pull(this.data.contents[index]),
+        },
+      });
+
+    if (res.stats.updated == 1) {
+      wx.showToast({
+        title: "删除成功",
+        icon: "success",
+      });
+      await this.getContents();
+    }
+  },
 });

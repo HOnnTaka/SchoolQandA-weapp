@@ -1,7 +1,6 @@
 Component({
   data: {
     questions: [],
-    backup: [],
     classifications: [],
     classificationSelectedId: "0",
     searchValue: "",
@@ -10,11 +9,16 @@ Component({
     page: 1,
     pageSize: 20,
     hasMore: true,
+    userType: 0,
   },
   created() {},
   pageLifetimes: {
-    // 获取问答列表
     async ready() {
+      const { result } = await wx.cloud.callFunction({
+        name: "login",
+      });
+      getApp().globalData.userInfo = result;
+      this.setData({ userType: result.type });
       this.animate(
         ".search-bar,.hot-tabs-scroll",
         [{ opacity: 0 }, { opacity: 1 }],
@@ -37,14 +41,14 @@ Component({
       await this.getClassifications();
       await this.getQuestions();
       wx.hideLoading();
-      setTimeout(async () => {
-        const { result } = await wx.cloud.callFunction({
-          name: "login",
+      if (result.type == 1) {
+        wx.showModal({
+          title: "提示",
+          content: "您已登录为管理员，可以进行管理操作",
+          showCancel: false,
         });
-        getApp().globalData.userInfo = result;
-      });
+      }
     },
-    // 页面关闭
   },
   methods: {
     async getClassifications() {
@@ -53,6 +57,12 @@ Component({
       const { data } = await db.collection("classification").get();
       // console.log(data);
       data.unshift({ _id: "0", classification: "全部" });
+      data.push({ _id: "-1", classification: "未分类" });
+
+      if (this.data.userType == 1) {
+        data.unshift({ _id: "-2", classification: "未回答（管理员）" });
+        data.unshift({ _id: "-3", classification: "添加分类（管理员）" });
+      }
 
       let animations = {};
       data.forEach((item, index) => {
@@ -96,9 +106,10 @@ Component({
       }
 
       const db = getApp().db;
+      const _ = db.command;
       const $ = db.command.aggregate;
       let data;
-      let cache = wx.getStorageSync(`${id}#${this.data.page}`);
+      let cache = getApp().storage[`${id}#${this.data.page}`];
       if (cache) {
         data = cache;
       } else {
@@ -121,13 +132,25 @@ Component({
           })
           .sort({ view_count: -1 });
 
-        if (id != "0") query = query.match({ classification_id: id });
+        if (id == "-1") {
+          // 在question模型中查找分类与classification模型中不匹配的数据
+          // query = query.lookup({
+          //   from: "classification",
+          //   let: { classification_id: "$classification_id" },
+          //   pipeline: $.pipeline().match(_.expr($.and([$.eq(["$_id", "$$classification_id"])]))),
+          //   as: "hasClassification",
+          // });
+          query = query.match({ classification_id: null });
+        } else if (id != "0") {
+          query = query.match({ classification_id: id });
+        }
         const result = await query
           .skip((this.data.page - 1) * this.data.pageSize)
           .limit(this.data.pageSize)
           .end();
-        wx.setStorageSync(`${id}#${this.data.page}`, result.list);
+        getApp().storage[`${id}#${this.data.page}`] = result.list;
         wx.hideLoading();
+        // console.log(result);
         data = result.list;
       }
       // console.log(data);
@@ -203,7 +226,7 @@ Component({
       });
       let res;
       const keyword = this.data.searchValue;
-      let cache = wx.getStorageSync(`${keyword}`);
+      let cache = getApp().storage[`${keyword}`];
       if (cache) {
         res = cache;
       } else {
@@ -213,7 +236,7 @@ Component({
             keyword: keyword,
           },
         });
-        wx.setStorageSync(`${keyword}`, result);
+        getApp().storage[`${keyword}`] = result;
         res = result;
       } // 滚动
       wx.createSelectorQuery()
@@ -232,6 +255,7 @@ Component({
         questions: res,
       });
     },
+    // 分类标签点击事件
     async onTabTap(e) {
       this.setData({
         searchValue: "",
@@ -243,14 +267,53 @@ Component({
       if (targetId == originId) {
         return;
       }
-      this.setData({
-        page: 1,
-        hasMore: true,
-      });
-      await this.getQuestions(targetId);
-      this.setData({
-        classificationSelectedId: targetId,
-      });
+      if (targetId == "-2") {
+        // 筛选未回答
+      } else if (targetId == "-3") {
+        // 添加分类
+        wx.showModal({
+          title: "添加分类",
+          placeholderText: "请输入分类名称",
+          editable: true,
+          success: res => {
+            if (res.confirm) {
+              const classification = res.content;
+              const db = getApp().db;
+              db.collection("classification")
+                .add({
+                  data: {
+                    classification: classification,
+                  },
+                })
+                .then(res => {
+                  wx.showToast({
+                    title: "添加成功",
+                    icon: "none",
+                    duration: 1000,
+                  });
+                  this.getClassifications();
+                })
+                .catch(err => {
+                  wx.showToast({
+                    title: "添加失败",
+                    icon: "none",
+                    duration: 1000,
+                  });
+                });
+            }
+          },
+        });
+      } else {
+        this.setData({
+          page: 1,
+          hasMore: true,
+        });
+        await this.getQuestions(targetId);
+        this.setData({
+          classificationSelectedId: targetId,
+        });
+      }
+
       // 滚动
       wx.createSelectorQuery()
         .select("#question-list")
@@ -258,6 +321,20 @@ Component({
         .exec(res => {
           res[0].node.scrollTo(0, 0);
         });
+    },
+    onTabLongPress(e) {
+      if (this.data.userType != 1) {
+        return;
+      }
+      console.log(e);
+
+      this.setData({
+        searchValue: "",
+        showCancel: false,
+        bottomTips: "",
+      });
+      const targetId = e.currentTarget.dataset.id;
+      const originId = this.data.classificationSelectedId;
     },
     onMoreAnswersTap(e) {
       const page = this;
@@ -276,18 +353,21 @@ Component({
                 return item;
               }),
             });
-            wx.clearStorageSync();
+            getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] = this.data.questions;
           },
-          updateAnswerCount: data => {
+          updateAnswer: data => {
             this.setData({
               questions: this.data.questions.map(item => {
                 if (item._id == data.questionId) {
                   item.answer_count = data.answer_count;
+                  if (!item.first_answer) {
+                    item.first_answer = data.content;
+                  }
                 }
                 return item;
               }),
             });
-            wx.clearStorageSync();
+            getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] = this.data.questions;
           },
         },
         success: function (res) {
@@ -309,6 +389,86 @@ Component({
       wx.navigateTo({
         url: "/pages/myquestion/myquestion",
       });
+    },
+    onSlideButtonTap(e) {
+      const { index, data: questionId } = e.detail;
+      // console.log(index, questionId);
+      if (index == 0) {
+        wx.showLoading({
+          title: "加载中",
+        });
+        wx.navigateTo({
+          url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
+          events: {
+            updateQuestion: data => {
+              console.log(data);
+              const { question, classification_id, questionId } = data;
+              if (
+                this.data.classificationSelectedId != "0" &&
+                classification_id != this.data.classificationSelectedId
+              ) {
+                getApp().storage = {};
+                this.setData({
+                  questions: this.data.questions.filter(item => item._id != data.questionId),
+                });
+              } else {
+                this.setData({
+                  questions: this.data.questions.map(item => {
+                    if (item._id == questionId) {
+                      item.question = question;
+                    }
+                    return item;
+                  }),
+                });
+                getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
+                  this.data.questions;
+              }
+            },
+          },
+          success: res => {
+            res.eventChannel.emit(
+              "acceptData",
+              this.data.questions.find(item => item._id == questionId)
+            );
+          },
+        });
+      } else if (index == 1) {
+        wx.showModal({
+          title: "提示",
+          content: "确定删除该问题吗？",
+          success: res => {
+            if (res.confirm) {
+              wx.showLoading({
+                title: "删除中",
+              });
+              const db = getApp().db;
+              db.collection("question")
+                .doc(questionId)
+                .remove()
+                .then(res => {
+                  wx.hideLoading();
+                  wx.showToast({
+                    title: "删除成功",
+                    icon: "none",
+                    duration: 1000,
+                  });
+                  this.setData({ questions: this.data.questions.filter(item => item._id != questionId) });
+                  getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
+                    this.data.questions;
+                })
+                .catch(err => {
+                  wx.hideLoading();
+                  console.log(err);
+                  wx.showToast({
+                    title: "删除失败",
+                    icon: "none",
+                    duration: 1000,
+                  });
+                });
+            }
+          },
+        });
+      }
     },
   },
 });

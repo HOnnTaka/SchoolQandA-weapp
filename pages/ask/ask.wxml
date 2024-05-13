@@ -1,68 +1,95 @@
 <page-meta class="container">
-  <form bindsubmit="submitForm" class="form">
-    <view class="top-tips" hover-class="none" hover-stop-propagation="false"
-      >填写分类可以让问题更快被看到</view
-    >
-    <view class="form-item meima-item" hover-class="none" hover-stop-propagation="false">
-      <label for="avatar" class="form-label" hover-class="none" hover-stop-propagation="false"> 头像 </label>
-      <button
-        id="avatar"
-        name="avatar"
-        class="form-input avatar-wrapper"
-        open-type="chooseAvatar"
-        bind:chooseavatar="onChooseAvatar"
+  <scroll-view class="form" scroll-y="true" scrollbar="none" enhanced="true" show-scrollbar="false">
+    <form bindsubmit="submitForm">
+      <view class="top-tips" hover-class="none" hover-stop-propagation="false"
+        >填写分类可以让问题更快被看到</view
       >
-        <image class="avatar" src="{{ avatarUrl }}"></image>
-      </button>
-    </view>
-    <view class="form-item " hover-class="none" hover-stop-propagation="false">
-      <label for="nickname" class="form-label" hover-class="none" hover-stop-propagation="false">
-        昵称
-      </label>
-      <input
-        id="nickname"
-        bindinput="bindNickname"
-        name="nickname"
-        type="nickname"
-        class="form-input weui-input"
-        value="{{ nickname }}"
-        placeholder="请输入昵称"
-      />
-    </view>
-    <view class="form-item2" hover-class="none" hover-stop-propagation="false">
-      <checkbox-group bindchange="bindSaveInfo">
-        <checkbox  id="saveInfo" class="weui-checkbox" value="check" checked="{{ checked }}" color="" />
-        <label for="saveInfo">保存头像和昵称</label>
-      </checkbox-group>
-    </view>
-    <view class="form-item" hover-class="none" hover-stop-propagation="false">
-      <label for="question" class="form-label" hover-class="none" hover-stop-propagation="false">
-        问题
-      </label>
-      <input
-        id="question"
-        name="question"
-        type="text"
-        placeholder="请输入问题"
-        class="form-input weui-input"
-      />
-    </view>
-    <view class="form-item" hover-class="none" hover-stop-propagation="false">
-      <label for="category" class="form-label" hover-class="none" hover-stop-propagation="false">
-        问题分类</label
+      <view class="top-tips" hover-class="none" hover-stop-propagation="false">{{
+        editInfo.questionId
+      }}</view>
+      <view
+        class="form-item meima-item {{ editInfo.type == 'edit' ? 'disabled' : '' }}"
+        hover-class="none"
+        hover-stop-propagation="false"
       >
-      <picker
-        id="category"
-        class="form-input"
-        name="category"
-        bindchange="bindPickerChange"
-        value="{{ chosenCategory }}"
-        range="{{ categories }}"
-        range-key="classification"
+        <label for="avatar" class="form-label" hover-class="none" hover-stop-propagation="false">
+          头像
+        </label>
+        <button
+          disabled="{{ editInfo.type == 'edit' }}"
+          id="avatar"
+          name="avatar"
+          class="form-input avatar-wrapper"
+          open-type="chooseAvatar"
+          bind:chooseavatar="onChooseAvatar"
+        >
+          <image class="avatar" src="{{ avatarUrl }}"></image>
+        </button>
+      </view>
+      <view
+        class="form-item {{ editInfo.type == 'edit' ? 'disabled' : '' }}"
+        hover-class="none"
+        hover-stop-propagation="false"
       >
-        <view class="picker"> {{ categories[chosenCategory].classification }} </view>
-      </picker>
-    </view>
-    <button form-type="submit" class="submit-btn">提交</button>
-  </form>
+        <label for="nickname" class="form-label" hover-class="none" hover-stop-propagation="false">
+          昵称
+        </label>
+        <input
+          disabled="{{ editInfo.type == 'edit' }}"
+          id="nickname"
+          bindinput="bindNickname"
+          name="nickname"
+          type="nickname"
+          class="form-input weui-input"
+          value="{{ nickname }}"
+          placeholder="请输入昵称"
+        />
+      </view>
+      <view  wx:if="{{ editInfo.type == 'edit' }}" class="top-tips" style="margin-top: 5px;">{{
+        userInfo._openid
+      }}</view>
+      <view
+        wx:if="{{ editInfo.type != 'edit' }}"
+        class="form-item2"
+        hover-class="none"
+        hover-stop-propagation="false"
+      >
+        <checkbox-group bindchange="bindSaveInfo">
+          <checkbox id="saveInfo" class="weui-checkbox" value="check" checked="{{ checked }}" color="" />
+          <label for="saveInfo">保存头像和昵称</label>
+        </checkbox-group>
+      </view>
+      <view class="form-item" hover-class="none" hover-stop-propagation="false">
+        <label for="question" class="form-label" hover-class="none" hover-stop-propagation="false">
+          问题
+        </label>
+        <input
+          id="question"
+          name="question"
+          type="text"
+          placeholder="请输入问题"
+          class="form-input weui-input"
+          value="{{ question }}"
+        />
+      </view>
+      <view class="form-item" hover-class="none" hover-stop-propagation="false">
+        <label for="category" class="form-label" hover-class="none" hover-stop-propagation="false">
+          问题分类</label
+        >
+        <picker
+          id="category"
+          class="form-input"
+          name="category"
+          bindchange="bindPickerChange"
+          value="{{ chosenCategory }}"
+          range="{{ categories }}"
+          range-key="classification"
+        >
+          <view class="picker"> {{ categories[chosenCategory].classification }} </view>
+        </picker>
+      </view>
+      <view  wx:if="{{ editInfo.type == 'edit' }}" class="top-tips" style="margin-top: 5px;">管理员：主页可添加分类,查看详情可编辑回答</view>
+      <button form-type="submit" class="submit-btn">提交</button>
+    </form>
+  </scroll-view>
 </page-meta>
