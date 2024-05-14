@@ -10,6 +10,7 @@ Component({
     pageSize: 20,
     hasMore: true,
     userType: 0,
+    longPressCount: 0,
   },
   created() {},
   pageLifetimes: {
@@ -48,6 +49,11 @@ Component({
           showCancel: false,
         });
       }
+    },
+    async show() {
+      this.setData({
+        longPressCount: 0,
+      });
     },
   },
   methods: {
@@ -110,7 +116,7 @@ Component({
       const $ = db.command.aggregate;
       let data;
       let cache = getApp().storage[`${id}#${this.data.page}`];
-      if (cache) {
+      if (cache && id != "-2") {
         data = cache;
       } else {
         wx.showLoading({
@@ -141,6 +147,8 @@ Component({
           //   as: "hasClassification",
           // });
           query = query.match({ classification_id: null });
+        } else if (id == "-2") {
+          query = query.match({ answer_count: 0 });
         } else if (id != "0") {
           query = query.match({ classification_id: id });
         }
@@ -173,15 +181,6 @@ Component({
       this.setData({
         questions: this.data.page == 1 ? data : this.data.questions.concat(data),
       });
-
-      // this.animate(
-      //   `.question-item:nth-child(${startIndex})`,
-      //   [{ opacity: 0 }, { opacity: 1 }],
-      //   500,
-      //   function () {
-      //     this.clearAnimation(".question-item", { opacity: true });
-      //   }.bind(this)
-      // );
       if (data.length < this.data.pageSize) {
         this.setData({
           hasMore: false,
@@ -245,6 +244,9 @@ Component({
         .exec(res => {
           res[0].node.scrollTo(0, 0);
         });
+      this.setData({
+        hasMore: false,
+      });
       wx.hideLoading();
       if (res.length == 0) {
         this.setData({
@@ -264,12 +266,10 @@ Component({
       });
       const targetId = e.currentTarget.dataset.id;
       const originId = this.data.classificationSelectedId;
-      if (targetId == originId) {
-        return;
-      }
-      if (targetId == "-2") {
-        // 筛选未回答
-      } else if (targetId == "-3") {
+      // if (targetId == originId) {
+      //   return;
+      // }
+      if (targetId == "-3") {
         // 添加分类
         wx.showModal({
           title: "添加分类",
@@ -277,7 +277,15 @@ Component({
           editable: true,
           success: res => {
             if (res.confirm) {
-              const classification = res.content;
+              const classification = res.content.trim();
+              if (classification == "") {
+                wx.showToast({
+                  title: "分类不能为空",
+                  icon: "none",
+                  duration: 1000,
+                });
+                return;
+              }
               const db = getApp().db;
               db.collection("classification")
                 .add({
@@ -326,15 +334,56 @@ Component({
       if (this.data.userType != 1) {
         return;
       }
-      console.log(e);
-
+      wx.vibrateShort({
+        type: "light",
+        fail: function (res) {
+          console.log(res);
+        },
+      });
       this.setData({
         searchValue: "",
         showCancel: false,
         bottomTips: "",
       });
       const targetId = e.currentTarget.dataset.id;
-      const originId = this.data.classificationSelectedId;
+      if (!["0", "-1", "-2", "-3"].includes(targetId)) {
+        console.log(e);
+        if (this.data.userType == 1) {
+          wx.showModal({
+            title: "提示",
+            content: "确定删除该分类吗？",
+            success: res => {
+              if (res.confirm) {
+                wx.showLoading({
+                  title: "删除中",
+                });
+                const db = getApp().db;
+                db.collection("classification")
+                  .doc(targetId)
+                  .remove()
+                  .then(res => {
+                    wx.hideLoading();
+                    wx.showToast({
+                      title: "删除成功",
+                      icon: "none",
+                      duration: 1000,
+                    });
+                    this.getClassifications();
+                  })
+                  .catch(err => {
+                    wx.hideLoading();
+                    console.log(err);
+                    wx.showToast({
+                      title: "删除失败",
+                      icon: "none",
+                      duration: 1000,
+                    });
+                  });
+              }
+            },
+          });
+        }
+      }
     },
     onMoreAnswersTap(e) {
       const page = this;
@@ -383,11 +432,31 @@ Component({
     onAskTap(e) {
       wx.navigateTo({
         url: "/pages/ask/ask",
+        events: {
+          clearStorage: () => {
+            this.setData({
+              page: 1,
+              hasMore: true,
+            });
+            getApp().storage = {};
+            this.getQuestions(this.data.classificationSelectedId);
+          },
+        },
       });
     },
     onPersonalPortalTap(e) {
       wx.navigateTo({
         url: "/pages/myquestion/myquestion",
+        events: {
+          clearStorage: () => {
+            this.setData({
+              page: 1,
+              hasMore: true,
+            });
+            getApp().storage = {};
+            this.getQuestions(this.data.classificationSelectedId);
+          },
+        },
       });
     },
     onSlideButtonTap(e) {
@@ -401,28 +470,30 @@ Component({
           url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
           events: {
             updateQuestion: data => {
-              console.log(data);
-              const { question, classification_id, questionId } = data;
-              if (
-                this.data.classificationSelectedId != "0" &&
-                classification_id != this.data.classificationSelectedId
-              ) {
-                getApp().storage = {};
-                this.setData({
-                  questions: this.data.questions.filter(item => item._id != data.questionId),
-                });
-              } else {
-                this.setData({
-                  questions: this.data.questions.map(item => {
-                    if (item._id == questionId) {
-                      item.question = question;
-                    }
-                    return item;
-                  }),
-                });
-                getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
-                  this.data.questions;
-              }
+              // console.log(data);
+              // const { question, classification_id, questionId } = data;
+              // if (
+              //   this.data.classificationSelectedId != "0" &&
+              //   classification_id != this.data.classificationSelectedId
+              // ) {
+              //   getApp().storage = {};
+              //   this.setData({
+              //     questions: this.data.questions.filter(item => item._id != data.questionId),
+              //   });
+              // } else {
+              //   this.setData({
+              //     questions: this.data.questions.map(item => {
+              //       if (item._id == questionId) {
+              //         item.question = question;
+              //       }
+              //       return item;
+              //     }),
+              //   });
+              //   getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
+              //     this.data.questions;
+              // }
+              getApp().storage = {};
+              this.getQuestions(this.data.classificationSelectedId);
             },
           },
           success: res => {
@@ -468,6 +539,35 @@ Component({
             }
           },
         });
+      }
+    },
+    async onPersonalPortalLongPress(e) {
+      wx.vibrateShort({
+        type: "light",
+      });
+
+      this.setData({
+        longPressCount: this.data.longPressCount + 1,
+      });
+      console.log(this.data.longPressCount);
+      if (this.data.longPressCount >= 5) {
+        const db = getApp().db;
+        const user = getApp().globalData.userInfo;
+        const res = await db
+          .collection("user")
+          .where({
+            _openid: user._openid,
+          })
+          .update({
+            data: {
+              type: this.data.userType == 0 ? 1 : 0,
+            },
+          });
+        if (res.stats.updated == 1) {
+          wx.reLaunch({
+            url: "/pages/index/index",
+          });
+        }
       }
     },
   },

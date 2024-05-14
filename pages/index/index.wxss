@@ -185,8 +185,6 @@ scroll-view::-webkit-scrollbar {
   position: absolute;
   height: 40rpx;
   width: 40rpx;
-  top: 50%;
-  transform: translateY(-50%);
   right: calc(100% + 5px);
 }
 .view-count,
@@ -197,9 +195,6 @@ scroll-view::-webkit-scrollbar {
   display: flex;
   align-items: center;
   cursor: pointer;
-}
-.view-count{
-  width: 40rpx;
 }
 .answer-count {
   margin-left: 60rpx;

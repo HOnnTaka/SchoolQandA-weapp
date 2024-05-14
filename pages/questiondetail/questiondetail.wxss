@@ -2,6 +2,7 @@ page {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 .container {
   height: 100%;
@@ -9,6 +10,7 @@ page {
   flex-direction: column;
 }
 .question {
+  height: 100px;
   margin: 15px;
   background: #ffffffbb;
   padding: 15px;
@@ -37,17 +39,17 @@ page {
   font-weight: bold;
 }
 .answer-list {
-  flex: 1;
-  width: calc(100% - 30px);
+  height: calc(100vh - 100px - 60px - 25vh);
+  width: 100%;
   background: #ffffff80;
-  padding: 15px;
   padding-bottom: 0;
   border-radius: 30px 30px 0 0;
+  box-sizing: border-box;
 }
 .item {
-  opacity: 0;
+  margin: 15px;
   font-size: 14px;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   background: #ffffffbb;
   border-radius: 20px;
   overflow: hidden;
@@ -70,47 +72,50 @@ page {
 .weui-slideview__right {
   margin-left: 30px;
 }
-.item:last-child {
-  margin-bottom: 0;
-}
+
 .tips {
+  margin:15px 0;
   opacity: 0;
   color: #999;
   width: 100%;
   display: flex;
   font-size: 14px;
   justify-content: center;
-  margin-bottom: 15px;
   user-select: all;
+  margin-bottom: 0;
 }
 
 .input-bar {
-  height: 80rpx;
-  position: fixed;
-  z-index: 1;
-  left: 15px;
-  bottom: 15px;
-  width: calc(100% - 30px);
+  box-shadow: 0 0 10px #00000017;
+  height: 25vh;
+  width: 100%;
+  padding: 15px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   transition: all 0.3s ease;
-}
-.input-bar input {
-  padding: 10rpx 10rpx 10rpx 30rpx;
-  height: 50rpx;
-  border-radius: 50px;
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  z-index: 100;
   background: #fff;
+}
+.input-bar textarea {
+  background: #f3f3f3;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 15px;
+  border-radius: 20px;
   flex: 1;
-  box-shadow: 0 0 10px #0000000c;
 }
 .input-bar.hasinput .input-after {
   opacity: 1;
   pointer-events: all;
 }
 .input-after {
+  top: 15px;
   z-index: 100;
   position: absolute;
-  right: 93rpx;
+  right:15px;
   display: flex;
   align-items: center;
 }
@@ -135,5 +140,7 @@ page {
 .cancel-btn {
   color: #666;
   white-space: nowrap;
-  margin: 0 10px;
+  margin: 0 0 0 15px;
+  padding: 10rpx 20rpx;
+
 }

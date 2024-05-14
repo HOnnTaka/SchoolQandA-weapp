@@ -7,16 +7,14 @@
     <view class="question-title">“{{ question }}”</view>
   </view>
   <scroll-view
-    scrollbar="none"
-    enhanced="true"
-    show-scrollbar="false"
+    scroll-y
     class="answer-list"
     type="list"
-    scroll-y
+    style="height:{{ userType == 0 ? 'calc(100vh - 100px - 60px);' : '' }}"
   >
-    <view class="tips" wx:if="{{ contents.length == 0 }}">暂无回答</view>
-    <view class="tips" wx:if="{{ userType == 1 }}">管理员：滑动回答可删除</view>
-    <view class="tips" wx:if="{{ userType == 1 }}">{{ questionId }}</view>
+    <text user-select class="tips" wx:if="{{ contents.length == 0 }}">暂无回答</text>
+    <text user-select class="tips" wx:if="{{ userType == 1 }}">管理员：滑动回答可删除</text>
+    <text user-select class="tips" wx:if="{{ userType == 1 }}">{{ questionId }}</text>
 
     <block wx:for="{{ contents }}" wx:key="index">
       <mp-slideview
@@ -25,12 +23,14 @@
         ext-class="item-ext"
         disable="{{ userType == 0 }}"
         buttons="{{ [{ text: '删除', type: 'warn', data: index }] }}"
-        >{{ item }}</mp-slideview
       >
+        <text user-select>{{ item }}</text>
+      </mp-slideview>
     </block>
   </scroll-view>
   <view class="input-bar" wx:if="{{ userType }}">
-    <input
+    <textarea
+      fixed
       type="text"
       bindtap="onDiscussFocus"
       bindfocus="onDiscussFocus"
@@ -38,9 +38,11 @@
       bindinput="onDiscussInput"
       bindconfirm="onDiscussTap"
       value="{{ discussValue }}"
-    />
+      disable-default-padding
+      adjust-keyboard-to="bottom"
+      show-confirm-bar="false"
+    ></textarea>
     <view class="input-after" wx:if="{{ discussValue }}">
-      <view class="clear-btn" bindtap="onClearTap">×</view>
       <view class="send-btn" bindtap="onDiscussTap">发送</view>
     </view>
     <view wx:if="{{ showCancel != '' }}" bindtap="onCancelTap" class="cancel-btn">取消</view>

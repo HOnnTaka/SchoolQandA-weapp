@@ -48,13 +48,10 @@ Page({
     this.animate(
       ".question",
       [
-        { opacity: 0, ease: "ease-in-out" },
-        { opacity: 1, ease: "ease-in-out" },
+        { opacity: 0, translateY: 500, ease: "ease-in-out" },
+        { opacity: 1, translateY: 0, ease: "ease-in-out" },
       ],
-      1000,
-      function () {
-        this.clearAnimation(".question", { opacity: true });
-      }.bind(this)
+      1000
     );
     setTimeout(() => {
       this.animate(
@@ -103,18 +100,6 @@ Page({
     this.setData({
       contents: list[0].contents,
     });
-    // 新评论进入动画
-    this.animate(
-      ".item",
-      [
-        { opacity: 0, translateY: 0, ease: "ease-in-out" },
-        { opacity: 1, translateY: 0, ease: "ease-in-out" },
-      ],
-      300,
-      function () {
-        this.clearAnimation(".item", { translateY: true });
-      }.bind(this)
-    );
   },
   onDiscussFocus(e) {
     console.log();

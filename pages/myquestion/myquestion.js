@@ -89,4 +89,65 @@ Page({
       },
     });
   },
+  onSlideButtonTap(e) {
+    const { index, data: questionId } = e.detail;
+    // console.log(index, questionId);
+    if (index == 0) {
+      wx.showLoading({
+        title: "加载中",
+      });
+      wx.navigateTo({
+        url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
+        events: {
+          updateQuestion: data => {
+            getApp().storage = {};
+            this.getQuestions(this.data.classificationSelectedId);
+          },
+        },
+        success: res => {
+          res.eventChannel.emit(
+            "acceptData",
+            this.data.questions.find(item => item._id == questionId)
+          );
+        },
+      });
+    } else if (index == 1) {
+      wx.showModal({
+        title: "提示",
+        content: "确定删除该问题吗？",
+        success: res => {
+          if (res.confirm) {
+            wx.showLoading({
+              title: "删除中",
+            });
+            const db = getApp().db;
+            db.collection("question")
+              .doc(questionId)
+              .remove()
+              .then(res => {
+                wx.hideLoading();
+                wx.showToast({
+                  title: "删除成功",
+                  icon: "none",
+                  duration: 1000,
+                });
+                this.getOpenerEventChannel().emit("clearStorage");
+                this.setData({ questions: this.data.questions.filter(item => item._id != questionId) });
+                getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
+                  this.data.questions;
+              })
+              .catch(err => {
+                wx.hideLoading();
+                console.log(err);
+                wx.showToast({
+                  title: "删除失败",
+                  icon: "none",
+                  duration: 1000,
+                });
+              });
+          }
+        },
+      });
+    }
+  },
 });

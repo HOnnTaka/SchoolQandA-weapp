@@ -1,4 +1,4 @@
-<page-meta class="container">
+<scroll-view scroll-y class="container">
   <block wx:for="{{ questions }}" wx:key="id">
     <mp-slideview
       animation="{{ item.animation }}"
@@ -16,26 +16,26 @@
           mode="aspectFit"
           lazy-load="true"
         />
-        <text class selectable="false" space="false" decode="false">{{ item.question }}</text>
+        <text user-select class selectable="false" space="false" decode="false">{{ item.question }}</text>
       </view>
       <view wx:if="{{ item.first_answer }}" class="answer">
         <image class="avatar" src="/images/default.png" mode="aspectFit" lazy-load="true" />
-        <text class selectable="false" space="false" decode="false">{{ item.first_answer }}</text>
+        <text user-select class selectable="false" space="false" decode="false">{{ item.first_answer }}</text>
       </view>
       <view wx:else class="answer">暂无回答</view>
       <view class="question-item-footer" hover-class="none" hover-stop-propagation="false">
         <view class="view-count" hover-class="none" hover-stop-propagation="false">
           <image src="../../images/view.png" />
-          <text class="" selectable="false">{{ item.view_count }}</text>
+          <text user-select class="" selectable="false">{{ item.view_count }}</text>
         </view>
         <view class="answer-count" hover-class="none" hover-stop-propagation="false">
           <image src="../../images/answer.png" />
-          <text selectable="false">{{ item.answer_count ? item.answer_count : 0 }}</text>
+          <text user-select selectable="false">{{ item.answer_count ? item.answer_count : 0 }}</text>
         </view>
         <view data-data="{{ item }}" class="more-answers" bindtap="onMoreAnswersTap">
-          <text class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
+          <text  class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
         </view>
       </view>
     </mp-slideview>
   </block>
-</page-meta>
+</scroll-view>

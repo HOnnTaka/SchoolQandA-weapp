@@ -17,7 +17,11 @@ Page({
       editInfo: options,
       userInfo: userInfo,
     });
-    console.log(options);
+    if (options.type == "edit") {
+      wx.setNavigationBarTitle({
+        title: "编辑问题",
+      });
+    }
 
     const db = getApp().db;
     const { data } = await db.collection("classification").get();
@@ -39,6 +43,7 @@ Page({
             item => item._id == (data.classification_id ? data.classification_id : "-1")
           ),
         });
+        wx.hideLoading();
       }
     });
 
@@ -104,7 +109,7 @@ Page({
   },
   async updateInfo(e) {
     console.log("edit");
-    const { question } = e.detail.value;
+    const { question, category } = e.detail.value;
     if (question.trim() == "") {
       return wx.showToast({
         title: "请输入问题内容",
@@ -216,6 +221,7 @@ Page({
         data: newQuestion,
       })
       .then(res => {
+        this.getOpenerEventChannel().emit("clearStorage");
         wx.showToast({
           title: "提交成功",
           icon: "success",
