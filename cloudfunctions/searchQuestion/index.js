@@ -1,15 +1,23 @@
 const cloud = require("wx-server-sdk");
 cloud.init();
-const db = cloud.database({ env: "dz-q-and-a-4gyin7qna06146b1" });
+const db = cloud.database({
+  env: "dz-q-and-a-4gyin7qna06146b1"
+});
 const $ = db.command.aggregate;
 exports.main = async (event, context) => {
   const keyword = event.keyword;
+  if (keyword == null || keyword.trim() == "") {
+    return []
+  }
   try {
     const res = await db
       .collection("question")
       .aggregate()
       .match({
-        question: db.RegExp({ regexp: keyword, options: "i" }),
+        question: db.RegExp({
+          regexp: keyword,
+          options: "i"
+        }),
       })
       .project({
         question: 1,
@@ -21,7 +29,9 @@ exports.main = async (event, context) => {
         user_id: 1,
         view_count: 1,
       })
-      .sort({ view_count: -1 })
+      .sort({
+        view_count: -1
+      })
       .end();
 
     return res.list;
