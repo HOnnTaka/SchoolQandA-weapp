@@ -24,8 +24,9 @@
       "outputPath": ""
     },
     "uglifyFileName": true,
-    "condition": false,
-    "compileWorklet": false
+    "condition": true,
+    "compileWorklet": false,
+    "swc": true
   },
   "condition": {},
   "editorSetting": {

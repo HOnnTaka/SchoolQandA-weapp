@@ -2,6 +2,7 @@ Page({
   data: {
     questions: "",
     userType: 0,
+    triggered: false,
   },
   async onLoad(options) {
     this.setData({ userType: getApp().globalData.userInfo.type });
@@ -100,8 +101,7 @@ Page({
         url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
         events: {
           updateQuestion: data => {
-            getApp().storage = {};
-            this.getQuestions(this.data.classificationSelectedId);
+            this.onRefresh();
           },
         },
         success: res => {
@@ -149,5 +149,18 @@ Page({
         },
       });
     }
+  },
+  async onRefresh(e) {
+    await this.getMyquestion();
+
+    this.setData({
+      triggered: false,
+    });
+
+    wx.showToast({
+      title: "刷新成功",
+      icon: "none",
+      duration: 1000,
+    });
   },
 });

@@ -1,4 +1,13 @@
-<scroll-view scroll-y class="container">
+<scroll-view
+  scroll-y
+  class="container"
+  refresher-triggered="{{ triggered }}"
+  enable-back-to-top
+  refresher-enabled
+  bindrefresherrefresh="onRefresh"
+  scroll-with-animation
+  enhanced="true"
+>
   <block wx:for="{{ questions }}" wx:key="id">
     <mp-slideview
       animation="{{ item.animation }}"
@@ -33,7 +42,7 @@
           <text user-select selectable="false">{{ item.answer_count ? item.answer_count : 0 }}</text>
         </view>
         <view data-data="{{ item }}" class="more-answers" bindtap="onMoreAnswersTap">
-          <text  class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
+          <text class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
         </view>
       </view>
     </mp-slideview>

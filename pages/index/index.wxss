@@ -81,8 +81,17 @@ scroll-view::-webkit-scrollbar {
   margin-top: 0;
   width: calc(100% - 30px);
 }
-.hot-tabs-scroll::-webkit-scrollbar {
-  display: none;
+::-webkit-scrollbar {
+  display: none !important;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent;
 }
 .hot-tabs {
   flex-direction: row;
@@ -132,7 +141,7 @@ scroll-view::-webkit-scrollbar {
 .weui-slideview__left {
   width: calc(100vw - 60px) !important;
 }
-.weui-slideview__right{
+.weui-slideview__right {
   margin-left: 30px;
 }
 .item-ext {
@@ -178,7 +187,7 @@ scroll-view::-webkit-scrollbar {
   color: #999;
   padding: 0 5rpx;
 }
-.question-item-footer text{
+.question-item-footer text {
   margin-bottom: -5rpx;
 }
 .question-item-footer image {

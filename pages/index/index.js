@@ -11,6 +11,8 @@ Component({
     hasMore: true,
     userType: 0,
     longPressCount: 0,
+    triggered: false,
+    searching: false,
   },
   created() {},
   pageLifetimes: {
@@ -19,24 +21,46 @@ Component({
         name: "login",
       });
       getApp().globalData.userInfo = result;
-      this.setData({ userType: result.type });
+      this.setData({
+        userType: result.type,
+      });
       this.animate(
         ".search-bar,.hot-tabs-scroll",
-        [{ opacity: 0 }, { opacity: 1 }],
+        [
+          {
+            opacity: 0,
+          },
+          {
+            opacity: 1,
+          },
+        ],
         1000,
         function () {
-          this.clearAnimation(".search-bar,.hot-tabs-scroll", { opacity: true });
+          this.clearAnimation(".search-bar,.hot-tabs-scroll", {
+            opacity: true,
+          });
         }.bind(this)
       );
       this.animate(
         "#question-list",
         [
-          { opacity: 0, translateY: 500, ease: "ease-in-out" },
-          { opacity: 1, translateY: 0, ease: "ease-in-out" },
+          {
+            opacity: 0,
+            translateY: 500,
+            ease: "ease-in-out",
+          },
+          {
+            opacity: 1,
+            translateY: 0,
+            ease: "ease-in-out",
+          },
         ],
         1000,
         function () {
-          this.clearAnimation("#question-list", { opacity: true, translateY: true });
+          this.clearAnimation("#question-list", {
+            opacity: true,
+            translateY: true,
+          });
         }.bind(this)
       );
       await this.getClassifications();
@@ -62,12 +86,24 @@ Component({
       const db = getApp().db;
       const { data } = await db.collection("classification").get();
       // console.log(data);
-      data.unshift({ _id: "0", classification: "全部" });
-      data.push({ _id: "-1", classification: "未分类" });
+      data.unshift({
+        _id: "0",
+        classification: "全部",
+      });
+      data.push({
+        _id: "-1",
+        classification: "未分类",
+      });
 
       if (this.data.userType == 1) {
-        data.unshift({ _id: "-2", classification: "未回答（管理员）" });
-        data.unshift({ _id: "-3", classification: "添加分类（管理员）" });
+        data.unshift({
+          _id: "-2",
+          classification: "未回答（管理员）",
+        });
+        data.unshift({
+          _id: "-3",
+          classification: "添加分类（管理员）",
+        });
       }
 
       let animations = {};
@@ -107,7 +143,9 @@ Component({
     async getQuestions(id = "0") {
       // 问答列表
       if (!this.data.hasMore) {
-        this.setData({ bottomTips: "没有更多了" });
+        this.setData({
+          bottomTips: "没有更多了",
+        });
         return;
       }
 
@@ -136,7 +174,9 @@ Component({
             user_id: 1,
             view_count: 1,
           })
-          .sort({ view_count: -1 });
+          .sort({
+            view_count: -1,
+          });
 
         if (id == "-1") {
           // 在question模型中查找分类与classification模型中不匹配的数据
@@ -146,11 +186,17 @@ Component({
           //   pipeline: $.pipeline().match(_.expr($.and([$.eq(["$_id", "$$classification_id"])]))),
           //   as: "hasClassification",
           // });
-          query = query.match({ classification_id: null });
+          query = query.match({
+            classification_id: null,
+          });
         } else if (id == "-2") {
-          query = query.match({ answer_count: 0 });
+          query = query.match({
+            answer_count: 0,
+          });
         } else if (id != "0") {
-          query = query.match({ classification_id: id });
+          query = query.match({
+            classification_id: id,
+          });
         }
         const result = await query
           .skip((this.data.page - 1) * this.data.pageSize)
@@ -180,6 +226,7 @@ Component({
 
       this.setData({
         questions: this.data.page == 1 ? data : this.data.questions.concat(data),
+        searching:false
       });
       if (data.length < this.data.pageSize) {
         this.setData({
@@ -209,6 +256,7 @@ Component({
         showCancel: false,
         page: 1,
         hasMore: true,
+        searching: false,
       });
       wx.hideKeyboard();
       this.getQuestions(this.data.classificationSelectedId);
@@ -220,6 +268,9 @@ Component({
       });
     },
     async onSearchTap(e) {
+      this.setData({
+        searching: true,
+      });
       wx.showLoading({
         title: "搜索中",
       });
@@ -426,35 +477,36 @@ Component({
     },
     async onScrollToLower(e) {
       // 加载更多
-      this.setData({ bottomTips: "正在加载中..." });
+      this.setData({
+        bottomTips: "正在加载中...",
+      });
       this.getQuestions(this.data.classificationSelectedId);
     },
     onAskTap(e) {
+      wx.showLoading({
+        title: "加载中",
+      });
       wx.navigateTo({
         url: "/pages/ask/ask",
         events: {
           clearStorage: () => {
-            this.setData({
-              page: 1,
-              hasMore: true,
-            });
-            getApp().storage = {};
-            this.getQuestions(this.data.classificationSelectedId);
+            this.onRefresh();
           },
         },
+        success:()=>{
+          wx.hideLoading();
+        }
       });
     },
     onPersonalPortalTap(e) {
+      wx.showLoading({
+        title: "加载中",
+      });
       wx.navigateTo({
         url: "/pages/myquestion/myquestion",
         events: {
           clearStorage: () => {
-            this.setData({
-              page: 1,
-              hasMore: true,
-            });
-            getApp().storage = {};
-            this.getQuestions(this.data.classificationSelectedId);
+            this.onRefresh();
           },
         },
       });
@@ -470,30 +522,7 @@ Component({
           url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
           events: {
             updateQuestion: data => {
-              // console.log(data);
-              // const { question, classification_id, questionId } = data;
-              // if (
-              //   this.data.classificationSelectedId != "0" &&
-              //   classification_id != this.data.classificationSelectedId
-              // ) {
-              //   getApp().storage = {};
-              //   this.setData({
-              //     questions: this.data.questions.filter(item => item._id != data.questionId),
-              //   });
-              // } else {
-              //   this.setData({
-              //     questions: this.data.questions.map(item => {
-              //       if (item._id == questionId) {
-              //         item.question = question;
-              //       }
-              //       return item;
-              //     }),
-              //   });
-              //   getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
-              //     this.data.questions;
-              // }
-              getApp().storage = {};
-              this.getQuestions(this.data.classificationSelectedId);
+              this.onRefresh();
             },
           },
           success: res => {
@@ -523,7 +552,9 @@ Component({
                     icon: "none",
                     duration: 1000,
                   });
-                  this.setData({ questions: this.data.questions.filter(item => item._id != questionId) });
+                  this.setData({
+                    questions: this.data.questions.filter(item => item._id != questionId),
+                  });
                   getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
                     this.data.questions;
                 })
@@ -563,12 +594,35 @@ Component({
               type: this.data.userType == 0 ? 1 : 0,
             },
           });
-        if (res.stats.updated == 1) {
-          wx.reLaunch({
-            url: "/pages/index/index",
-          });
-        }
+        wx.reLaunch({
+          url: "/pages/index/index",
+        });
       }
+    },
+    async onRefresh(e) {
+      this.setData({
+        page: 1,
+        hasMore: true,
+      });
+      getApp().storage = {};
+      await this.getClassifications();
+
+      console.log(this.data.searching);
+      if (this.data.searching) {
+        await this.onSearchTap();
+      } else {
+        await this.getQuestions(this.data.classificationSelectedId);
+      }
+
+      this.setData({
+        triggered: false,
+      });
+
+      wx.showToast({
+        title: "刷新成功",
+        icon: "none",
+        duration: 1000,
+      });
     },
   },
 });
