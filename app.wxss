@@ -1,4 +1,3 @@
-
 page{
-  background-image: linear-gradient(90deg, #e9e9ff, #ffecec);
+  background-image: linear-gradient(90deg, #377dff10, #ff2a8310);
 }

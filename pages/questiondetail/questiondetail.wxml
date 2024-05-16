@@ -10,25 +10,25 @@
     scroll-y
     class="answer-list"
     type="list"
-    style="height:{{ userType == 0 ? 'calc(100vh - 100px - 60px);' : '' }}"
-  >
+    style="height:{{ !showCancel ? 'calc(100vh - 100px - 60px);' : '' }}"
+  > 
     <text user-select class="tips" wx:if="{{ contents.length == 0 }}">暂无回答</text>
     <text user-select class="tips" wx:if="{{ userType == 1 }}">管理员：滑动回答可删除</text>
     <text user-select class="tips" wx:if="{{ userType == 1 }}">{{ questionId }}</text>
 
     <block wx:for="{{ contents }}" wx:key="index">
-      <mp-slideview
+      <view
         bindbuttontap="onSlideButtonTap"
-        class="item"
+        class="item item-ext"
         ext-class="item-ext"
         disable="{{ userType == 0 }}"
         buttons="{{ [{ text: '删除', type: 'warn', data: index }] }}"
       >
         <text user-select>{{ item }}</text>
-      </mp-slideview>
+      </view>
     </block>
   </scroll-view>
-  <view class="input-bar" wx:if="{{ userType }}">
+  <view class="input-bar" style="height:{{ showCancel ? '25vh' : '10vh' }}" wx:if="{{ userType }}">
     <textarea
       fixed
       type="text"

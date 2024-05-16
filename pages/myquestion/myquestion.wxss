@@ -15,7 +15,7 @@ page {
   padding-bottom: 30px;
 }
 .question-item {
-  width: calc(100% - 30px);
+  width: calc(100% - 60px);
   overflow: hidden;
   transition: all 0.3s ease;
   margin: 15px;
@@ -55,10 +55,10 @@ page {
 }
 .question text,
 .answer text {
+  transition: all 0.3s ease;
   width: calc(100% - 30px);
   user-select: all;
   line-break: anywhere;
-
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -67,6 +67,7 @@ page {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
+
 .question-item-footer {
   font-size: 14px;
   display: flex;

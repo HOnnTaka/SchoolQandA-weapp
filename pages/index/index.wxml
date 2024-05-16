@@ -19,37 +19,38 @@
   refresher-triggered="{{triggered}}" 
   lower-threshold="100" 
   bindscrolltolower="onScrollToLower" using-sticky enhanced="true" id="question-list" type="list" scroll-y enable-back-to-top refresher-enabled bindrefresherrefresh="onRefresh" scroll-with-animation>
-    <text user-select class="tips" >点击分类标签快速查看相关问题，下拉刷新</text>
+    <text style="cursor: pointer;" user-select class="tips" wx:if="{{ !searching }}" bindtap="onRefresh">{{isPC?"点击分类标签快速查看相关问题，点此刷新":"点击分类标签快速查看相关问题，下拉刷新"}}</text>
+    <text user-select class="tips" wx:if="{{ searching }}">没搜到相关问题？点击提问按钮发起新问题</text>
     <text user-select class="tips" wx:if="{{ userType == 1 }}">管理员：长按分类可删除</text>
-    <text user-select class="tips" wx:if="{{ userType == 1 }}">管理员：查看详情可编辑回答，滑动问题可编辑分类</text>
 
-    <block wx:for="{{ questions }}" wx:key="id">
-      <mp-slideview animation="{{ item.animation }}" bindbuttontap="onSlideButtonTap" class="question-item" ext-class="item-ext" disable="{{ userType == 0 }}" buttons="{{[{ text: '编辑', type: 'primary', data: item._id },{ text: '删除', type: 'warn', data: item._id }]}}">
+    <block wx:for="{{ questions }}" wx:for-index="index" wx:for-item="item" wx:key="id">
+      <view bindbuttontap="onSlideButtonTap" class="question-item item-ext" buttons="{{[{ text: '编辑', type: 'primary', data: item._id },{ text: '删除', type: 'warn', data: item._id }]}}">
         <view class="question">
-          <image data-id="{{ item.user_id }}" class="avatar" src="{{ item.user_avatar }}" mode="aspectFit" lazy-load="true" />
-          <text user-select class selectable="false" space="false" decode="false">{{ item.question }}</text>
+          <image  class="avatar" src="{{ item.user_avatar }}" mode="aspectFit" lazy-load="true" />
+          <text user-select>{{ item.question }}</text>
         </view>
         <view wx:if="{{ item.first_answer }}" class="answer">
           <image class="avatar" src="/images/default.png" mode="aspectFit" lazy-load="true" />
-          <text user-select class selectable="false" space="false" decode="false">{{
-            item.first_answer
-          }}</text>
+          <view user-select style="{{item.showmore}}">{{item.first_answer}}</view>
         </view>
         <view wx:else class="answer">暂无回答</view>
         <view class="question-item-footer" hover-class="none" hover-stop-propagation="false">
           <view class="view-count" hover-class="none" hover-stop-propagation="false">
             <image src="../../images/view.png" />
-            <text user-select class="" selectable="false">{{ item.view_count }}</text>
+            <text user-select  >{{ item.view_count }}</text>
           </view>
           <view class="answer-count" hover-class="none" hover-stop-propagation="false">
             <image src="../../images/answer.png" />
-            <text user-select selectable="false">{{ item.answer_count ? item.answer_count : 0 }}</text>
+            <text user-select >{{ item.answer_count ? item.answer_count : 0 }}</text>
           </view>
-          <view data-data="{{ item }}" class="more-answers" bindtap="onMoreAnswersTap">
-            <text class="" selectable="false" space="false" decode="false"> 查看详情 >>> </text>
+          <view class="more-answers" >
+            <text data-id="{{ item._id }}" bindtap="onDelTap" wx:if="{{userType == 1}}" style="color: rgb(255, 133, 149);">删除</text>
+            <text data-id="{{ item._id }}" bindtap="onEditTap" wx:if="{{userType == 1}}" style="margin: 0 15px;">编辑问题</text>
+            <text data-data="{{ item }}" bindtap="onMoreAnswersTap">{{userType == 0 ? '查看详情 >>>' : '编辑回答'}}</text>
           </view>
+          <view wx:if="{{item.showShowMoreBtn}}" data-answer="{{item.first_answer}}" data-index="{{index}}" class="more" bindtap="onSlideTap" >{{item.showmore? '收起 ▲' : '展开 ▶'}}</view>
         </view>
-      </mp-slideview>
+      </view>
     </block>
 
     <text user-select class="bottom-tips">{{ bottomTips }}</text>

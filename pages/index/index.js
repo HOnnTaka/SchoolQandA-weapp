@@ -13,6 +13,7 @@ Component({
     longPressCount: 0,
     triggered: false,
     searching: false,
+    isPC: false,
   },
   created() {},
   pageLifetimes: {
@@ -23,6 +24,7 @@ Component({
       getApp().globalData.userInfo = result;
       this.setData({
         userType: result.type,
+        isPC: wx.getDeviceInfo().platform == "windows",
       });
       this.animate(
         ".search-bar,.hot-tabs-scroll",
@@ -223,11 +225,11 @@ Component({
       //     .step()
       //     .export();
       // });
-
       this.setData({
         questions: this.data.page == 1 ? data : this.data.questions.concat(data),
-        searching:false
+        searching: false,
       });
+      this.setShowShowmoreBtn();
       if (data.length < this.data.pageSize) {
         this.setData({
           hasMore: false,
@@ -307,6 +309,7 @@ Component({
       this.setData({
         questions: res,
       });
+      this.setShowShowmoreBtn();
     },
     // 分类标签点击事件
     async onTabTap(e) {
@@ -493,9 +496,9 @@ Component({
             this.onRefresh();
           },
         },
-        success:()=>{
+        success: () => {
           wx.hideLoading();
-        }
+        },
       });
     },
     onPersonalPortalTap(e) {
@@ -511,66 +514,65 @@ Component({
         },
       });
     },
-    onSlideButtonTap(e) {
-      const { index, data: questionId } = e.detail;
-      // console.log(index, questionId);
-      if (index == 0) {
-        wx.showLoading({
-          title: "加载中",
-        });
-        wx.navigateTo({
-          url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
-          events: {
-            updateQuestion: data => {
-              this.onRefresh();
-            },
+    onEditTap(e) {
+      const questionId = e.currentTarget.dataset.id;
+      wx.showLoading({
+        title: "加载中",
+      });
+      wx.navigateTo({
+        url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
+        events: {
+          updateQuestion: data => {
+            this.onRefresh();
           },
-          success: res => {
-            res.eventChannel.emit(
-              "acceptData",
-              this.data.questions.find(item => item._id == questionId)
-            );
-          },
-        });
-      } else if (index == 1) {
-        wx.showModal({
-          title: "提示",
-          content: "确定删除该问题吗？",
-          success: res => {
-            if (res.confirm) {
-              wx.showLoading({
-                title: "删除中",
-              });
-              const db = getApp().db;
-              db.collection("question")
-                .doc(questionId)
-                .remove()
-                .then(res => {
-                  wx.hideLoading();
-                  wx.showToast({
-                    title: "删除成功",
-                    icon: "none",
-                    duration: 1000,
-                  });
-                  this.setData({
-                    questions: this.data.questions.filter(item => item._id != questionId),
-                  });
-                  getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
-                    this.data.questions;
-                })
-                .catch(err => {
-                  wx.hideLoading();
-                  console.log(err);
-                  wx.showToast({
-                    title: "删除失败",
-                    icon: "none",
-                    duration: 1000,
-                  });
+        },
+        success: res => {
+          res.eventChannel.emit(
+            "acceptData",
+            this.data.questions.find(item => item._id == questionId)
+          );
+        },
+      });
+    },
+    onDelTap(e) {
+      const questionId = e.currentTarget.dataset.id;
+      wx.showModal({
+        title: "提示",
+        content: "确定删除该问题吗？",
+        success: res => {
+          if (res.confirm) {
+            wx.showLoading({
+              title: "删除中",
+            });
+            const db = getApp().db;
+            db.collection("question")
+              .doc(questionId)
+              .remove()
+              .then(res => {
+                wx.hideLoading();
+                wx.showToast({
+                  title: "删除成功",
+                  icon: "none",
+                  duration: 1000,
                 });
-            }
-          },
-        });
-      }
+                this.setData({
+                  questions: this.data.questions.filter(item => item._id != questionId),
+                });
+                getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] =
+                  this.data.questions;
+              })
+              .catch(err => {
+                wx.hideLoading();
+                console.log(err);
+                wx.showToast({
+                  title: "删除失败",
+                  icon: "none",
+                  duration: 1000,
+                });
+              });
+          }
+        },
+      });
     },
     async onPersonalPortalLongPress(e) {
       wx.vibrateShort({
@@ -580,7 +582,13 @@ Component({
       this.setData({
         longPressCount: this.data.longPressCount + 1,
       });
-      console.log(this.data.longPressCount);
+      console.log(this.data.longPressCount,wx.getDeviceInfo().platform);
+      if (wx.getDeviceInfo().platform == "windows"){
+        wx.showToast({
+          title: 5 - this.data.longPressCount,
+          icon: "none",
+        })
+      }
       if (this.data.longPressCount >= 5) {
         const db = getApp().db;
         const user = getApp().globalData.userInfo;
@@ -622,6 +630,31 @@ Component({
         title: "刷新成功",
         icon: "none",
         duration: 1000,
+      });
+    },
+    async onSlideTap(e) {
+      const { index, answer } = e.currentTarget.dataset;
+      console.log(Math.ceil(answer.length / 19));
+      this.setData({
+        questions: this.data.questions.map((item, i) => {
+          if (i == index) {
+            item["showmore"] = item.showmore
+              ? ""
+              : `height:${Math.ceil(answer.length / 20) * 45}rpx;white-space: unset;`;
+          } else {
+            item["showmore"] = false;
+          }
+          return item;
+        }),
+      });
+    },
+    setShowShowmoreBtn() {
+      this.setData({
+        questions: this.data.questions.map(item => {
+          if (!item.first_answer) return item;
+          item.showShowMoreBtn = Math.ceil(item.first_answer?.length / 19) <= 1 ? false : true;
+          return item;
+        }),
       });
     },
   },
