@@ -227,11 +227,9 @@ Page({
           icon: "success",
           duration: 2000,
         });
-        setTimeout(() => {
-          wx.redirectTo({
-            url: "/pages/myquestion/myquestion",
-          });
-        }, 1500);
+        wx.redirectTo({
+          url: "/pages/myquestion/myquestion",
+        });
       })
       .catch(err => {
         console.error(err);

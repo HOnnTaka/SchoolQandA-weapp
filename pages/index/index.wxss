@@ -207,7 +207,7 @@ scroll-view::-webkit-scrollbar {
   background: #fff;
   border-radius: 50px;
   padding: 2px 15px;
-  box-shadow: 0 0 10px #00000033;
+  box-shadow: 0 0 10px #0000000c;
   position: absolute;
   left: 50%;
   top: 100%;

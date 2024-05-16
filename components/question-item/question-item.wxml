@@ -1,2 +1,30 @@
-<!--components/question-item/question-item.wxml-->
-<text>components/question-item/question-item.wxml</text>
+
+<block wx:for="{{ questions }}" wx:for-index="index" wx:for-item="item" wx:key="id">
+    <view bindbuttontap="onSlideButtonTap" class="question-item item-ext" buttons="{{[{ text: '编辑', type: 'primary', data: item._id },{ text: '删除', type: 'warn', data: item._id }]}}">
+      <view class="question">
+        <image  class="avatar" src="{{ item.user_avatar }}" mode="aspectFit" lazy-load="true" />
+        <text user-select>{{ item.question }}</text>
+      </view>
+      <view wx:if="{{ item.first_answer }}" class="answer">
+        <image class="avatar" src="/images/default.png" mode="aspectFit" lazy-load="true" />
+        <view user-select style="{{item.showmore}}">{{item.first_answer}}</view>
+      </view>
+      <view wx:else class="answer">暂无回答</view>
+      <view class="question-item-footer" hover-class="none" hover-stop-propagation="false">
+        <view class="view-count" hover-class="none" hover-stop-propagation="false">
+          <image src="../../images/view.png" />
+          <text user-select  >{{ item.view_count }}</text>
+        </view>
+        <view class="answer-count" hover-class="none" hover-stop-propagation="false">
+          <image src="../../images/answer.png" />
+          <text user-select >{{ item.answer_count ? item.answer_count : 0 }}</text>
+        </view>
+        <view class="more-answers" >
+          <text data-id="{{ item._id }}" bindtap="onDelTap" wx:if="{{userType == 1}}" style="color: rgb(255, 133, 149);">删除</text>
+          <text data-id="{{ item._id }}" bindtap="onEditTap" wx:if="{{userType == 1}}" style="margin: 0 15px;">编辑问题</text>
+          <text data-data="{{ item }}" bindtap="onMoreAnswersTap">{{userType == 0 ? '查看详情 >>>' : '编辑回答'}}</text>
+        </view>
+        <view wx:if="{{item.showShowMoreBtn}}" data-answer="{{item.first_answer}}" data-index="{{index}}" class="more" bindtap="onSlideTap" >{{item.showmore? '收起 ▲' : '展开 ▶'}}</view>
+      </view>
+    </view>
+  </block>

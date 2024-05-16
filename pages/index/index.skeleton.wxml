@@ -1,0 +1,149 @@
+<!--
+此文件为开发者工具生成，生成时间: 2024/5/16下午4:24:21
+使用方法：
+在 D:\code\SchoolQandA-weapp\pages\index\index.wxml 引入模板
+
+```
+<import src="index.skeleton.wxml"/>
+<template is="skeleton" wx:if="{{loading}}" />
+```
+
+在 D:\code\SchoolQandA-weapp\pages\index\index.wxss 中引入样式
+```
+@import "./index.skeleton.wxss";
+```
+
+更多详细信息可以参考文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/skeleton.html
+-->
+<template name="skeleton">
+  <view class="sk-container">
+    <page-meta class="container">
+      <view class="search-bar" style=";transition:unset;transition-property:unset;transform-origin:50% 50% 0;-webkit-transition:unset;-webkit-transition-property:unset;-webkit-transform-origin:50% 50% 0">
+        <image class="search-icon sk-image" mode="aspectFit"></image>
+        <view placeholder="有问题直接搜" type="text" value="true" class="sk-image"></view>
+      </view>
+      <scroll-view scroll-x="true" class="hot-tabs-scroll" enhanced="true" type="list" style=";transition:unset;transition-property:unset;transform-origin:50% 50% 0;-webkit-transition:unset;-webkit-transition-property:unset;-webkit-transform-origin:50% 50% 0">
+        <view class="hot-tabs" style="scroll-snap-align: none;">
+          <view class="tab sk-transparent sk-text-18-7500-763 sk-text" data-id="-3" style="opacity: 0; transform: translateX(100px);transition:500ms ease 0ms;transform:translateX(0px);transition-property:transform,opacity;transform-origin:50% 50% 0;-webkit-transition:500ms ease 0ms;-webkit-transform:translateX(0px);-webkit-transition-property:transform,opacity;-webkit-transform-origin:50% 50% 0;opacity:1">添加分类（管理员）</view>
+          <view class="tab sk-transparent sk-text-18-7500-529 sk-text" data-id="-2" style="opacity: 0; transform: translateX(100px);transition:500ms ease 0ms;transform:translateX(0px);transition-property:transform,opacity;transform-origin:50% 50% 0;-webkit-transition:500ms ease 0ms;-webkit-transform:translateX(0px);-webkit-transition-property:transform,opacity;-webkit-transform-origin:50% 50% 0;opacity:1">未回答（管理员）</view>
+          <view class="tab active sk-transparent sk-image" data-id="0" style="opacity: 0; transform: translateX(100px);transition:500ms ease 0ms;transform:translateX(0px);transition-property:transform,opacity;transform-origin:50% 50% 0;-webkit-transition:500ms ease 0ms;-webkit-transform:translateX(0px);-webkit-transition-property:transform,opacity;-webkit-transform-origin:50% 50% 0;opacity:1">全部</view>
+        </view>
+      </scroll-view>
+      <scroll-view enable-back-to-top="true" refresher-enabled="true" scroll-with-animation="true" scroll-y="true" using-sticky="true" enhanced="true" id="question-list" lower-threshold="100" type="list" style=";transition:unset;transition-property:unset;transform-origin:50% 50% 0;-webkit-transition:unset;-webkit-transition-property:unset;-webkit-transform-origin:50% 50% 0">
+        <text user-select="true" class="tips sk-transparent sk-text-18-7500-546 sk-text" style="cursor: pointer; scroll-snap-align: none;">点击分类标签快速查看相关问题，下拉刷新</text>
+        <text user-select="true" class="tips sk-transparent sk-text-18-7500-345 sk-text">管理员：长按分类可删除</text>
+        <view class="question-item item-ext">
+          <view class="question">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <text user-select="true" class="sk-transparent sk-text-18-7500-274 sk-text">学生能考本科吗？</text>
+          </view>
+          <view class="answer">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <view style="true" class="sk-transparent sk-text-18-7500-471 sk-text">可以，高职高考班参加3+证书高职高考，可以报考省内高职院校(大专3年）及部分本科院校（本科学制4年）。</view>
+          </view>
+          <view class="question-item-footer" hover-class="none" hover-stop-propagation="true">
+            <view class="view-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-text-18-7500-634 sk-text">588</text>
+            </view>
+            <view class="answer-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-opacity">2</text>
+            </view>
+            <view class="more-answers sk-image">
+              <text data-id="default_question_251" style="color: rgb(255, 133, 149);" class="sk-transparent sk-text-18-7500-267 sk-text">删除</text>
+              <text data-id="default_question_251" style="margin: 0 15px;" class="sk-transparent sk-text-18-7500-482 sk-text">编辑问题</text>
+              <text data-data="[object Object]" class="sk-transparent sk-text-18-7500-790 sk-text">编辑回答</text>
+            </view>
+            <view class="more sk-transparent sk-text-18-7500-880 sk-text" data-answer="可以，高职高考班参加3+证书高职高考，可以报考省内高职院校(大专3年）及部分本科院校（本科学制4年）。" data-index="0">展开 ▶</view>
+          </view>
+        </view>
+        <view class="question-item item-ext">
+          <view class="question">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <text user-select="true" class="sk-transparent sk-text-18-7500-482 sk-text">学校的录取分数线是多少？</text>
+          </view>
+          <view class="answer">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <view style="true" class="sk-transparent sk-text-18-7500-534 sk-text">第一批录取分数线是根据广州市招生办设定的分数线，2023年市招办划定的最低控制线是465分。</view>
+          </view>
+          <view class="question-item-footer" hover-class="none" hover-stop-propagation="true">
+            <view class="view-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-text-18-7500-517 sk-text">442</text>
+            </view>
+            <view class="answer-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-opacity">2</text>
+            </view>
+            <view class="more-answers sk-image">
+              <text data-id="default_question_240" style="color: rgb(255, 133, 149);" class="sk-transparent sk-text-18-7500-400 sk-text">删除</text>
+              <text data-id="default_question_240" style="margin: 0 15px;" class="sk-transparent sk-text-18-7500-690 sk-text">编辑问题</text>
+              <text data-data="[object Object]" class="sk-transparent sk-text-18-7500-975 sk-text">编辑回答</text>
+            </view>
+            <view class="more sk-transparent sk-text-18-7500-933 sk-text" data-answer="第一批录取分数线是根据广州市招生办设定的分数线，2023年市招办划定的最低控制线是465分。" data-index="1">展开 ▶</view>
+          </view>
+        </view>
+        <view class="question-item item-ext">
+          <view class="question">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <text user-select="true" class="sk-transparent sk-text-18-7500-986 sk-text">学校学杂费一共多少元？</text>
+          </view>
+          <view class="answer">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <view style="true" class="sk-transparent sk-text-18-7500-363 sk-text">每学年学费3800元。书本按实际收取，约每学期300元，如在校用餐，早餐、午餐则使用校园卡充值消费，丰俭由人。</view>
+          </view>
+          <view class="question-item-footer" hover-class="none" hover-stop-propagation="true">
+            <view class="view-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-text-18-7500-429 sk-text">352</text>
+            </view>
+            <view class="answer-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-opacity">1</text>
+            </view>
+            <view class="more-answers sk-image">
+              <text data-id="default_question_244" style="color: rgb(255, 133, 149);" class="sk-transparent sk-text-18-7500-16 sk-text">删除</text>
+              <text data-id="default_question_244" style="margin: 0 15px;" class="sk-transparent sk-text-18-7500-135 sk-text">编辑问题</text>
+              <text data-data="[object Object]" class="sk-transparent sk-text-18-7500-147 sk-text">编辑回答</text>
+            </view>
+            <view class="more sk-transparent sk-text-18-7500-572 sk-text" data-answer="每学年学费3800元。书本按实际收取，约每学期300元，如在校用餐，早餐、午餐则使用校园卡充值消费，丰俭由人。" data-index="2">展开 ▶</view>
+          </view>
+        </view>
+        <view class="question-item item-ext">
+          <view class="question">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <text user-select="true" class="sk-transparent sk-text-18-7500-601 sk-text">各专业有什么报考限制吗？</text>
+          </view>
+          <view class="answer">
+            <image class="avatar sk-image" lazy-load="true" mode="aspectFit"></image>
+            <view style="true" class="sk-transparent sk-text-18-7500-873 sk-text">按广州市招生办相关要求。</view>
+          </view>
+          <view class="question-item-footer" hover-class="none" hover-stop-propagation="true">
+            <view class="view-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-text-18-7500-285 sk-text">343</text>
+            </view>
+            <view class="answer-count" hover-class="none" hover-stop-propagation="true">
+              <image class="sk-image"></image>
+              <text user-select="true" class="sk-transparent sk-opacity">1</text>
+            </view>
+            <view class="more-answers sk-image">
+              <text data-id="default_question_80" style="color: rgb(255, 133, 149);" class="sk-transparent sk-text-18-7500-340 sk-text">删除</text>
+              <text data-id="default_question_80" style="margin: 0 15px;" class="sk-transparent sk-text-18-7500-222 sk-text">编辑问题</text>
+              <text data-data="[object Object]" class="sk-transparent sk-text-18-7500-61 sk-text">编辑回答</text>
+            </view>
+          </view>
+        </view>
+        <view class="question-item item-ext"></view>
+      </scroll-view>
+      <button id="ask-portal" class="sk-pseudo sk-pseudo-circle sk-image">
+        <image class="true sk-image" mode="aspectFit"></image>
+        <text class="sk-transparent sk-text-14-5834-552 sk-text" style="background-position-x: 50%;">我也要提问</text>
+      </button>
+      <button id="personal-portal" style="width: unset" class="sk-pseudo sk-pseudo-circle sk-image">
+        <image mode="aspectFit" class="sk-image"></image>
+      </button>
+    </page-meta>
+  </view>
+</template>

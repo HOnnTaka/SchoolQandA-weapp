@@ -8,10 +8,12 @@
   "useExtendedLib": {
     "weui": true
   },
+  "themeLocation": "theme.json",
+  "globalStyle": "app.wxss",
   "window": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "@navTxtStyler",
     "navigationBarTitleText": "信职Q&A",
-    "navigationBarBackgroundColor": "#ffffffff"
+    "navigationBarBackgroundColor": "@navBgColor"
   },
   "style": "v2",
   "componentFramework": "glass-easel",

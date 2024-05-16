@@ -1,0 +1,108 @@
+/* 
+此文件为开发者工具生成，生成时间: 2024/5/16下午4:21:56
+使用方法：
+在 index.wxss 文件末尾引入样式
+```
+@import "./index-wxa-auto-dark.wxss";
+```
+ */
+
+@media (prefers-color-scheme: dark) {
+    .container {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .search-bar input {
+        background: rgb(17, 17, 17);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .search-btn {
+        color: rgba(17, 17, 17, 0.9333333333333333);
+        background-image: rgb(0, 0, 0);
+    }
+
+    .clear-btn {
+        background: rgba(75, 75, 75, 0.8);
+        color: rgba(17, 17, 17, 0.7333333333333333);
+    }
+
+    .cancel-btn {
+        color: rgb(149, 149, 149);
+    }
+
+    ::-webkit-scrollbar {
+        background: rgba(0, 0, 0, 0);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0);
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0);
+    }
+
+    .tab {
+        background-color: rgba(17, 17, 17, 0.7333333333333333);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .tab.active {
+        background-image: rgb(0, 0, 0);
+        color: rgb(17, 17, 17);
+    }
+
+    #question-list {
+        background: rgba(17, 17, 17, 0.5019607843137255);
+    }
+
+    .tips {
+        color: rgb(99, 99, 99);
+    }
+
+    .question-item {
+        background: rgba(17, 17, 17, 0.7333333333333333);
+        border-bottom: rgb(0, 0, 0);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .question-item-footer {
+        color: rgb(99, 99, 99);
+    }
+
+    .more {
+        background: rgb(17, 17, 17);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .bottom-tips {
+        color: rgb(99, 99, 99);
+    }
+
+    .more-answers {
+        color: rgba(0, 0, 0, 0);
+        background-image: rgb(0, 0, 0);
+    }
+
+    #ask-portal {
+        color: rgb(17, 17, 17);
+        background-image: rgb(0, 0, 0);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    #personal-portal {
+        color: rgb(17, 17, 17);
+        background-image: rgb(0, 0, 0);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .tabBar {
+        background: rgba(17, 17, 17, 0.5058823529411764);
+        border-top: rgb(0, 0, 0);
+    }
+
+    .tabBar-item.on {
+        color: rgb(0, 106, 158);
+    }
+}
