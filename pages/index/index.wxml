@@ -20,7 +20,7 @@
   lower-threshold="100" 
   bindscrolltolower="onScrollToLower" using-sticky enhanced="true" id="question-list" type="list" scroll-y enable-back-to-top refresher-enabled bindrefresherrefresh="onRefresh" scroll-with-animation>
     <text style="cursor: pointer;" user-select class="tips" wx:if="{{ !searching }}" bindtap="onRefresh">{{isPC?"点击分类标签快速查看相关问题，点此刷新":"点击分类标签快速查看相关问题，下拉刷新"}}</text>
-    <text user-select class="tips" wx:if="{{ searching }}">没搜到相关问题？点击提问按钮发起新问题</text>
+    <text user-select class="tips" wx:if="{{ searching }}">没搜到想要的问题？点击提问按钮发起新问题</text>
     <text user-select class="tips" wx:if="{{ userType == 1 }}">管理员：长按分类可删除</text>
 
     <block wx:for="{{ questions }}" wx:for-index="index" wx:for-item="item" wx:key="id">
@@ -44,7 +44,7 @@
             <text user-select >{{ item.answer_count ? item.answer_count : 0 }}</text>
           </view>
           <view class="more-answers" >
-            <text data-id="{{ item._id }}" bindtap="onDelTap" wx:if="{{userType == 1}}" style="color: rgb(255, 133, 149);">删除</text>
+            <text data-id="{{ item._id }}" bindtap="onDelTap" wx:if="{{userType == 1}}" style="color: rgba(255, 111, 130, 0.842);">删除</text>
             <text data-id="{{ item._id }}" bindtap="onEditTap" wx:if="{{userType == 1}}" style="margin: 0 15px;">编辑问题</text>
             <text data-data="{{ item }}" bindtap="onMoreAnswersTap">{{userType == 0 ? '查看详情 >>>' : '编辑回答'}}</text>
           </view>

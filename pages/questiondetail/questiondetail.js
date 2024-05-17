@@ -149,19 +149,15 @@ Page({
         icon: "success",
       });
       await this.getContents();
-      this.getOpenerEventChannel().emit("updateAnswer", {
-        questionId: this.data.questionId,
-        content: this.data.discussValue,
-        answer_count: this.data.contents.length,
-      });
+      this.getOpenerEventChannel().emit("updateAnswer");
       this.setData({
         discussValue: "",
         showCancel: false,
       });
     }
   },
-  async onSlideButtonTap(e) {
-    const { data: index } = e.detail;
+  async onDelTap(e) {
+    const { index } = e.currentTarget.dataset;
     wx.showModal({
       title: "提示",
       content: "确定删除该回答吗？",
@@ -202,6 +198,7 @@ Page({
         title: "删除成功",
         icon: "success",
       });
+      this.getOpenerEventChannel().emit("updateAnswer");
       await this.getContents();
     }
   },

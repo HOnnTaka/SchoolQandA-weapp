@@ -1,5 +1,5 @@
 /* 
-此文件为开发者工具生成，生成时间: 2024/5/16下午4:21:56
+此文件为开发者工具生成，生成时间: 2024/5/17上午9:54:46
 使用方法：
 在 app.wxss 文件末尾引入样式
 ```
@@ -9,9 +9,6 @@
 
 @media (prefers-color-scheme: dark) {
     page {
-        background: rgba(0, 0, 0, 0.8);
-        background-image: linear-gradient(90deg, #377dff10, #ff2a8310);
-        /* 导航栏 */
-        
+        background-image: rgb(0, 0, 0);
     }
 }

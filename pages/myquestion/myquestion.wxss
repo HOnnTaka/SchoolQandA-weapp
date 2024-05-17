@@ -119,3 +119,4 @@ page {
   -webkit-background-clip: text;
   transition: all 0.3s ease;
 }
+@import './myquestion-wxa-auto-dark.wxss'

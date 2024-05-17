@@ -1,0 +1,33 @@
+/* 
+此文件为开发者工具生成，生成时间: 2024/5/17上午9:54:14
+使用方法：
+在 myquestion.wxss 文件末尾引入样式
+```
+@import "./myquestion-wxa-auto-dark.wxss";
+```
+ */
+
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: rgba(17, 17, 17, 0.5019607843137255);
+    }
+
+    .question-item {
+        background: rgba(17, 17, 17, 0.7333333333333333);
+        border-bottom: rgb(0, 0, 0);
+        box-shadow: rgb(0, 0, 0);
+    }
+
+    .question-item-footer {
+        color: rgb(99, 99, 99);
+    }
+
+    .bottom-tips {
+        color: rgb(99, 99, 99);
+    }
+
+    .more-answers {
+        color: rgba(0, 0, 0, 0);
+        background-image: rgb(0, 0, 0);
+    }
+}

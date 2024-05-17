@@ -459,18 +459,7 @@ Component({
             getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] = this.data.questions;
           },
           updateAnswer: data => {
-            this.setData({
-              questions: this.data.questions.map(item => {
-                if (item._id == data.questionId) {
-                  item.answer_count = data.answer_count;
-                  if (!item.first_answer) {
-                    item.first_answer = data.content;
-                  }
-                }
-                return item;
-              }),
-            });
-            getApp().storage[`${this.data.classificationSelectedId}#${this.data.page}`] = this.data.questions;
+            this.onRefresh(0);
           },
         },
         success: function (res) {
@@ -493,7 +482,7 @@ Component({
         url: "/pages/ask/ask",
         events: {
           clearStorage: () => {
-            this.onRefresh();
+            this.onRefresh(0);
           },
         },
         success: () => {
@@ -509,7 +498,7 @@ Component({
         url: "/pages/myquestion/myquestion",
         events: {
           clearStorage: () => {
-            this.onRefresh();
+            this.onRefresh(0);
           },
         },
       });
@@ -523,7 +512,7 @@ Component({
         url: `/pages/ask/ask?type=edit&questionId=${questionId}`,
         events: {
           updateQuestion: data => {
-            this.onRefresh();
+            this.onRefresh(0);
           },
         },
         success: res => {
@@ -582,12 +571,12 @@ Component({
       this.setData({
         longPressCount: this.data.longPressCount + 1,
       });
-      console.log(this.data.longPressCount,wx.getDeviceInfo().platform);
-      if (wx.getDeviceInfo().platform == "windows"){
+      console.log(this.data.longPressCount, wx.getDeviceInfo().platform);
+      if (wx.getDeviceInfo().platform == "windows") {
         wx.showToast({
           title: 5 - this.data.longPressCount,
           icon: "none",
-        })
+        });
       }
       if (this.data.longPressCount >= 5) {
         const db = getApp().db;
@@ -607,7 +596,7 @@ Component({
         });
       }
     },
-    async onRefresh(e) {
+    async onRefresh(show = 1) {
       this.setData({
         page: 1,
         hasMore: true,
@@ -626,11 +615,13 @@ Component({
         triggered: false,
       });
 
-      wx.showToast({
-        title: "刷新成功",
-        icon: "none",
-        duration: 1000,
-      });
+      if (show != 0) {
+        wx.showToast({
+          title: "刷新成功",
+          icon: "none",
+          duration: 1000,
+        });
+      }
     },
     async onSlideTap(e) {
       const { index, answer } = e.currentTarget.dataset;

@@ -14,7 +14,6 @@
       class="question-item item-ext"
       ext-class="item-ext"
       disable="{{ userType == 0 }}"
-      buttons="{{[{ text: '编辑', type: 'primary', data: item._id },{ text: '删除', type: 'warn', data: item._id }]}}"
     >
       <view class="question">
         <image

@@ -18,7 +18,7 @@
     }
 
     .search-btn {
-        color: rgba(17, 17, 17, 0.9333333333333333);
+        color: rgba(255, 255, 255, 0.8);
         background-image: rgb(0, 0, 0);
     }
 
@@ -50,7 +50,6 @@
 
     .tab.active {
         background-image: rgb(0, 0, 0);
-        color: rgb(17, 17, 17);
     }
 
     #question-list {
@@ -86,12 +85,15 @@
     }
 
     #ask-portal {
-        color: rgb(17, 17, 17);
+        opacity: 0.9;
+        color: rgba(255, 255, 255, 0.8);
         background-image: rgb(0, 0, 0);
         box-shadow: rgb(0, 0, 0);
     }
 
     #personal-portal {
+        opacity: 0.9;
+        color: rgba(255, 255, 255, 0.8);
         color: rgb(17, 17, 17);
         background-image: rgb(0, 0, 0);
         box-shadow: rgb(0, 0, 0);

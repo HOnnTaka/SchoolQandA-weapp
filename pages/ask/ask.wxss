@@ -91,3 +91,4 @@ picker {
   margin-top: 15px;
   box-shadow: 0 0 20px #17ade352;
 }
+@import './ask-wxa-auto-dark.wxss'
