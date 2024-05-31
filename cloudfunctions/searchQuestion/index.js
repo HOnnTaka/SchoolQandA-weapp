@@ -7,7 +7,7 @@ const db = cloud.database({
 const $ = db.command.aggregate;
 const _ = db.command;
 exports.main = async (event, context) => {
-  const text = event.keyword;
+  const { keyword: text, userInfo } = event;
 
   if (text == null || text.trim() == "") {
     return [];
@@ -18,12 +18,38 @@ exports.main = async (event, context) => {
   const keywords = result.map(item => item.keyword);
   console.log(keywords);
   try {
+    const res1 = await db
+      .collection("question")
+      .aggregate()
+      .match({
+        question: db.RegExp({
+          regexp: `.*${text}.*`,
+          options: "i",
+        }),
+      })
+      .project({
+        question: 1,
+        first_answer: $.arrayElemAt(["$contents", 0]),
+        answer_count: $.size("$contents"),
+        classification_id: 1,
+        user_avatar: 1,
+        user_nickname: 1,
+        user_id: 1,
+        view_count: 1,
+      })
+      .end();
     const res = await db
       .collection("question")
       .aggregate()
       .match(
         // 数组contents[0]中包含关键词或者字段question包含关键词，模糊查询
         _.or([
+          {
+            question: db.RegExp({
+              regexp: `.*${text}.*`,
+              options: "i",
+            }),
+          },
           {
             question: db.RegExp({
               regexp: `.*${keywords.join("|")}.*`,
@@ -69,10 +95,24 @@ exports.main = async (event, context) => {
           scoreB += result[i].weight;
         }
       }
-      return  scoreA - scoreB ;
+      return scoreB - scoreA;
     });
-
-    return sortedResult;
+    const finalResult = res1.list.concat(sortedResult);
+    if (finalResult.length <= 5) {
+      const addRes = await db.collection("question").add({
+        data: {
+          user_id: userInfo._openid,
+          user_avatar: userInfo.avatarUrl,
+          user_nickname: userInfo.nickname,
+          classification_id: null,
+          question: text,
+          contents: [],
+          view_count: 0,
+        },
+      });
+      console.log(addRes);
+    }
+    return finalResult;
   } catch (err) {
     console.error(err);
     return err;
